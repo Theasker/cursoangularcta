@@ -12,6 +12,7 @@
         - [Componente principal](#componente-principal)
         - [Metadatos de un componente](#metadatos-de-un-componente)
         - [Interpolación](#interpolación)
+        - [Creación de componentes](#creación-de-componentes)
     - [Referencias oficiales y enlaces](#referencias-oficiales-y-enlaces)
 
 <!-- /TOC -->
@@ -97,9 +98,47 @@ Acceso o interpolación del contenido de una variable de una clase de un compone
 ````
 Carga el contenido de la variable `title` del componente.
 
+### Creación de componentes
+
+Cada vez que creamos un nuevo componente `nombre.component.ts` hay que referenciarlo en el módulo principal `app.module.ts`.
+
+````javascript
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+
+import { AppComponent } from './app.component';
+import {HolaMundoComponent} from '../components/hola-mundo.component';
+
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    HolaMundoComponent
+  ],
+  imports: [
+    BrowserModule
+  ],
+  providers: [],
+  bootstrap: [HolaMundoComponent]
+})
+export class AppModule { }
+````
+
+* **bootstrap**: Referenciamos todos los componentes que se ejecutan al iniciar este módulo.
+* **declarations**: Todos los componentes que forman parte del módulo.
+
+Todas las clases de los componentes, para que se puedan usar en otros componentes o en otros lugares de la aplicación hay que exportar esa clase con la palabra reservada **`export`**.
+
+Antes de usar cada uno de los componentes y agregarlo al apartado **declarations**, hay que importar el fichero del lugar en el que esté.
+
+````javascript
+import {HolaMundoComponent} from '../components/hola-mundo.component';
+````
+
 ## Referencias oficiales y enlaces
 
-Profesor: ricardo.jaume@pue.es
+Profesor: **`ricardo.jaume@pue.es`**
 
 * Documentación oficial de Angular en https://angular.io/
 * Documentación oficial de Typescript en http://www.typescriptlang.org/
