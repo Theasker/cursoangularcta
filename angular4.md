@@ -34,7 +34,7 @@
 
 ## Instalación y creación de un proyecto
 
-Instalamos angular de manera global en el sistema:
+Instalamos angular de manera global en el sistema **teniendo instalado antes nodejs**:
 ````bash
 npm install -g @angular/cli
 ````
@@ -314,7 +314,7 @@ Los atributos (variables de clase) suelen ser siempre privadas y las propiedades
 
 Creo un modelo Alumno:
 ````javascript
-class Alumno{
+export class Alumno{
     private _nombre: string;
     private _edad: number;
     private _curso: string;
@@ -351,7 +351,7 @@ class Alumno{
 }
 ````
 
-Luego para poder usarlo hay primero que importarlo
+Luego para poder usarlo hay primero que importarlo en el componente que queramos usar.
 
 ````javascript
   import { Component, OnInit, ViewEncapsulation } from '@angular/core';
@@ -384,10 +384,8 @@ Al hacer click en el botón, llama a la función `verResultado()`:
 
 ### Generación
 
-Generación de un componente en una carpeta:
-````bash
-ng generate component components/second-component
-````
+* Creación de un nuevo proyecto: `ng new my-app`
+* Generación de un componente en una carpeta: `ng generate component components/second-component`
 
 ## Referencias oficiales y enlaces
 
