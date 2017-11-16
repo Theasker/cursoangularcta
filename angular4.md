@@ -392,5 +392,5 @@ Al hacer click en el botón, llama a la función `verResultado()`:
 Profesor: **`ricardo.jaume@pue.es`**
 
 * Documentación oficial de Angular en https://angular.io/
-* Documentación oficial de Typescript en http://www.typescriptlang.org/
+* Documentación oficial de Typescript en http://www.typescriptlang.org/docs/home.html
 * [Angular-cli](https://cli.angular.io/)
