@@ -1,0 +1,46 @@
+<p *ngIf="_verListado === false">
+  <button (click)="verResultado();">Ver resultado</button>
+</p>
+<p *ngIf="_verListado === true">
+  <button (click)="verResultado();">Ocultar resultado</button>
+</p>
+<p>
+  Resultado del boton: {{_resultado}}
+</p>
+<p>
+  Datos del alumno{{verDatosAlumno()}}
+</p>
+<p>
+    <input type="text" #nombre placeholder="Nombre Alumno">
+    
+    <button (click)="nombreUsuario = nombre.value">Mostrar Nombre</button>
+    <span *ngIf="nombreUsuario">
+        Visualizado por: {{nombreUsuario}}
+    </span>
+    
+</p>
+
+Resultados de alumnos:
+<ul *ngIf="_verListado">
+  <li *ngFor="let alumno of _alumnos; index as i; first as primero; last as ultimo">
+    <span *ngIf="primero;else losdemas" class="textoRojo">
+      {{i+1}} - {{primero}} - {{ultimo}} - 
+      Nombre: {{alumno.nombre}} // Edad: {{alumno.edad}} // Curso: {{alumno.curso}}
+    </span>
+    <ng-template #losdemas>
+      {{i+1}} - {{primero}} - {{ultimo}} - 
+      Nombre: {{alumno.nombre}} // Edad: {{alumno.edad}} // Curso: {{alumno.curso}}
+    </ng-template>
+  </li>    
+</ul>
+
+Resultados de alumnos:
+<ul *ngIf="_verListado">
+  <li *ngFor="let alumno of _alumnos; index as i; first as primero; last as ultimo">
+    <span [class.textoRojo] = "primero">
+      {{i+1}} - {{primero}} - {{ultimo}} - 
+      Nombre: {{alumno.nombre}} // Edad: {{alumno.edad}} // Curso: {{alumno.curso}}
+    </span>
+  </li>    
+</ul>
+
