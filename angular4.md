@@ -180,9 +180,7 @@ Este es el primer método que se ejecuta en un componente. Se usa para llamar a 
 
 ````javascript
 import { Component, OnInit } from '@angular/core';
-
 ...
-
 export class PersonaComponent implements OnInit{
     ngOninit(){
         this.actualizarDatos("Mauricio", 44);
@@ -386,6 +384,7 @@ Al hacer click en el botón, llama a la función `verResultado()`:
 
 * Creación de un nuevo proyecto: `ng new my-app`
 * Generación de un componente en una carpeta: `ng generate component components/second-component`
+* Generación de un componente sin carpeta y diciendole donde: ''
 
 ## Referencias oficiales y enlaces
 

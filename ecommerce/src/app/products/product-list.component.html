@@ -1,0 +1,50 @@
+<h1 class="text-center">{{pageTitle}}</h1>
+<div class="panel panel-primary">
+  <div class="panel-heading"><h2>Product List</h2></div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-2">Filtrado por</div>
+        <div class="col-md-4">
+          <input class="form-control" [(ngModel)]="listFilter" type="text" name="" id="">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">Filtrado por:{{listFilter}}</div>
+      </div>
+      <div *ngIf="products && products.length" class="table-responsive">
+        <!-- Table -->
+        <table class="table ">
+          <thead>
+            <tr>
+              <th><button class="btn btn-primary" (click)="toggleImage()">{{(showImage) ? 'Ocultar Imagen' : 'Mostrar imagen' }}</button></th>
+              <th>Producto</th>
+              <th>Codigo</th>
+              <th>Disponible</th>
+              <th>Precio</th>
+              <th>Popularidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of products">
+              <td>
+                <img *ngIf="showImage" 
+                  [src]="product.imageUrl" 
+                  [title]="name" 
+                  [style.width.px]="imageWidth"
+                  [style.margin.px]="imageMargin" />
+              </td>
+              <td>{{product.name}}</td>
+              <td>{{product.code}}</td>
+              <td>{{product.releaseDate}}</td>
+              <td>{{product.price}}</td>
+              <td>
+                <!-- rating -->
+                {{product.rating}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+    </div>  
+</div>
