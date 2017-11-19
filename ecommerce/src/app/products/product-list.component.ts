@@ -13,12 +13,13 @@ export class ProductListComponent implements OnInit {
   showImage: boolean = false;
   imageWidth: number = 50;
   imageMargin: number = 2;
+  private _imageTemp: string = 'https://dummyimage.com/600x400/000/fff';
 
   public get listFilter(): string{
     return this._listFilter;
   }
 
-  public set listFilter(value : string) {
+  public set listFilter(value: string) {
     this._listFilter = value;
   }
 
@@ -26,35 +27,35 @@ export class ProductListComponent implements OnInit {
     this.products = [
       {
         id: 1,
-        name: 'Producto1', 
-        code: 'P-1', 
-        releaseDate: '1 de Diciembre', 
+        name: 'Producto1',
+        code: 'P-1',
+        releaseDate: '1 de Diciembre',
         description: 'Producto de limpieza',
         price: 12.90,
         rating: 7,
-        imageUrl: 'http://lorempixel.com/100/100'
+        imageUrl: this._imageTemp
       },
       {
         id: 2,
-        name: 'Producto2', 
-        code: 'P-2', 
-        releaseDate: '2 de Diciembre', 
+        name: 'Producto2',
+        code: 'P-2',
+        releaseDate: '2 de Diciembre',
         description: 'Producto de 2',
         price: 15.50,
         rating: 5,
-        imageUrl: 'http://lorempixel.com/100/100'
+        imageUrl: this._imageTemp
       },
       {
         id: 3,
-        name: 'Producto3', 
-        code: 'P-3', 
-        releaseDate: '3 de Diciembre', 
+        name: 'Producto3',
+        code: 'P-3',
+        releaseDate: '3 de Diciembre',
         description: 'Producto de 3',
         price: 122.90,
         rating: 2,
-        imageUrl: 'http://lorempixel.com/100/100'
+        imageUrl: this._imageTemp
       },
-    ]
+    ];
   }
 
   ngOnInit() {
