@@ -248,6 +248,13 @@ Controlar un botón para mostrar o ocultar el resultado
 
 ### Property Binding
 
+Diferentes comunicaciones entre partes de Angular
+
+* **(click)="metodo()"** Eventos del tempalte a la lógica en la clase.
+* **{{interpolación}}**: Lógica al template
+* **[(ngModel)]**: Bidireccional del template a la lógica y al revés.
+* **[class]**: Properti binding -> Pasamos información de la lógica al template
+
 Se pone entre corchetes para pasar información 
 
 #### [class]
@@ -310,7 +317,7 @@ Por convención las variables privadas se inician su nombre con un "_".
 
 Los atributos (variables de clase) suelen ser siempre privadas y las propiedades (getter y setters) son publicas
 
-Creo un modelo Alumno:
+Creo un modelo Alumno, `alumno.model.ts`:
 ````javascript
 export class Alumno{
     private _nombre: string;
@@ -384,7 +391,7 @@ Al hacer click en el botón, llama a la función `verResultado()`:
 
 * Creación de un nuevo proyecto: `ng new my-app`
 * Generación de un componente en una carpeta: `ng generate component components/second-component`
-* Generación de un componente sin carpeta y diciendole donde: ''
+* Generación de un componente sin carpeta y diciendole donde: `ng generate component components/second-component --flat --spec false` (no creamos el fichero de testing *.spec.ts).
 
 ## Referencias oficiales y enlaces
 

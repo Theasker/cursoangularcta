@@ -1,4 +1,4 @@
-interface IProduct {
+export interface IProduct {
     id: number;
     name: string;
     code: string;
@@ -7,6 +7,4 @@ interface IProduct {
     description: string;
     rating: number;
     imageUrl: string;
-}
-
-export {IProduct};
+}   
