@@ -318,23 +318,44 @@ Creación de un evento click, que pasa el valor de una variable al componente pa
 
 En el componente hijo usamos del decorador `@Output` creamos una variable de tipo `EventEmitter<type>` y la tipamos con el tipo de variable que se va a pasar, y en el template creamos el evento que usaremos para crear el evento de tipo `EventEmitter` que pasará la variable:
 
+
+`star.component.html`
 ````html
-<div class="crop" [style.width.px]="starWidth" [title]="rating" (click)="onClick()">
+<div (click)="onClick()">
 
 ````
 
+`star.component.ts`
 ````typescript
 import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 
-...
+@Component({
+  selector: 'app-star',
+  ...
+})
 
 export class StarComponent implements OnInit, OnChanges {
   @Output() ratingClicked: EventEmitter<any>;
   ...
-
-
 ````
 
+Luego en el componente padre recogemos el evento creado `ratingClicked` y se lo asignamos a un método de la clase padre con la palabra reservada `$event` que captura los datos del evento, por ejemplo, changeView($event)
+
+`product-list.component.html`
+```html
+<app-star [rating]="product.rating" (ratingClicked)="changeView($event)"></app-star>
+```
+
+`product-list.component.ts`
+```typescript
+...
+changeView(data: any) {
+    console.log('data: ', data);
+    this.shotTitle = data.show;
+    return this.shotTitle;
+}
+...
+```
 
 ## TypeScript
 
