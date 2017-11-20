@@ -392,10 +392,13 @@ Al hacer click en el botón, llama a la función `verResultado()`:
 * Creación de un nuevo proyecto: `ng new my-app`
 * Generación de un componente en una carpeta: `ng generate component components/second-component`
 * Generación de un componente sin carpeta y diciendole donde: `ng generate component components/second-component --flat --spec false` (no creamos el fichero de testing *.spec.ts).
+* Crear un Custom Pipe: `ng generate pipe shared/convert-to-spaces`
 
 ## Referencias oficiales y enlaces
 
 Profesor: **`ricardo.jaume@pue.es`**
+
+* http://veyon.io/ --> Monitorización de ordenadores de aulas
 
 * Documentación oficial de Angular en https://angular.io/
 * Documentación oficial de Typescript en http://www.typescriptlang.org/docs/home.html

@@ -1,6 +1,6 @@
 <h1 class="text-center">{{pageTitle}}</h1>
 <div class="panel panel-primary">
-  <div class="panel-heading"><h2>Lista de productos</h2></div>
+  <div class="panel-heading"><h2 *ngIf="shotTitle">Lista de productos</h2></div>
     <div class="panel-body">
       <div class="row">
         <div class="col-md-2">Buscar:</div>
@@ -36,16 +36,16 @@
                   [style.margin.px]="imageMargin" />
               </td>
               <td>{{product.name | uppercase | lowercase}}</td>
-              <td>{{product.code}}</td>
+              <!-- Custom Pipe que sustituye el parámetro por espacios -->
+              <td>{{product.code | convertToSpaces: '-'}}</td>
               <td>{{product.releaseDate}}</td>
               <!-- Mínimo una cifra entera y mínimo 2 decimales y máximo 2 decimales
               con true le decimos que se vea el simbolo de la moneda
               -->
               <td>{{product.price | currency: 'EUR':true:'1.2-2'}}</td> 
-              <td>
-                <!-- rating -->
-                {{product.rating}}
-              </td>
+              <!-- Pasamos como parámetro al componente hijo starComponent la variable product.rating -->
+              <!-- Capturamos el evento ratingClicked() que viene del componente hijo y lo asociamos al método changeView() -->
+              <td><app-star [rating]="product.rating" (ratingClicked)="changeView($event)"></app-star></td>
             </tr>
           </tbody>
         </table>
