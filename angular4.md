@@ -21,6 +21,9 @@
         - [Property Binding](#property-binding)
             - [[class]](#class)
             - [Interpolación con variables en el template](#interpolación-con-variables-en-el-template)
+        - [Intercambio de información entre componentes](#intercambio-de-información-entre-componentes)
+            - [@Input](#input)
+            - [@Output](#output)
     - [TypeScript](#typescript)
         - [Instalación](#instalación)
         - [Tipado de devolución de una función](#tipado-de-devolución-de-una-función)
@@ -285,6 +288,53 @@ private _nombreUsuario: string;
     Visualizado por: {{nombreUsuario}}
 </p>
 ````
+
+### Intercambio de información entre componentes
+
+#### @Input
+
+Queremos renderizar las estrellas de un ranking que es un componente propio de cada uno de los registros donde está el dato numérico del ranking.
+
+En la plantilla origen del modelo, pasamos como parámetro a la etiqueta del componente hijo (`<app-star></app-star>`):
+
+`product-list.component.ts` (componente padre):
+````html
+<td><app-star [rating]="product.rating"></app-star></td>
+````
+
+Luego en el componente hijo (`star.component.ts`) creamos el decorador `@Input` con el nombre de la variable que recogerá el parámetro pasado por el padre.
+````typescript
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
+
+@Input() rating: number;
+````
+
+#### @Output
+
+Creación de un evento click, que pasa el valor de una variable al componente padre:
+
+* **Componente padre**: `product-list.component.ts`
+* **Componente hijo**: `star.component.ts`
+
+En el componente hijo usamos del decorador `@Output` creamos una variable de tipo `EventEmitter<type>` y la tipamos con el tipo de variable que se va a pasar, y en el template creamos el evento que usaremos para crear el evento de tipo `EventEmitter` que pasará la variable:
+
+````html
+<div class="crop" [style.width.px]="starWidth" [title]="rating" (click)="onClick()">
+
+````
+
+````typescript
+import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
+
+...
+
+export class StarComponent implements OnInit, OnChanges {
+  @Output() ratingClicked: EventEmitter<any>;
+  ...
+
+
+````
+
 
 ## TypeScript
 
