@@ -1,46 +1,29 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+// Control de los errores y debug de los observables
+import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/do';
+
 import { IProduct } from '../interfaces/product.interface';
 
 @Injectable()
 export class ProductService {
   // Declaración de una constante de clase
-  static readonly IMAGETEMP: string = 'https://dummyimage.com/600x400/000/fff';
+  static readonly IMAGETEMP: string = '';
 
-  constructor() { }
+  constructor(private _http: HttpClient) { }
 
-  getProducts(): Array<IProduct> {
-    return [
-      {
-        id: 1,
-        name: 'Producto1',
-        code: 'P-1',
-        releaseDate: '1 de Diciembre',
-        description: 'Producto de limpieza',
-        price: 12.90,
-        rating: 2,
-        imageUrl: ProductService.IMAGETEMP
-      },
-      {
-        id: 2,
-        name: 'Producto2',
-        code: 'P-2',
-        releaseDate: '2 de Diciembre',
-        description: 'Producto de 2',
-        price: 15.55,
-        rating: 3,
-        imageUrl: ProductService.IMAGETEMP
-      },
-      {
-        id: 3,
-        name: 'Producto3',
-        code: 'P-3',
-        releaseDate: '3 de Diciembre',
-        description: 'Producto de 3',
-        price: 122.90,
-        rating: 2,
-        imageUrl: ProductService.IMAGETEMP
-      },
-    ];
+  getProducts(): Observable<IProduct[]> {
+    // Nos devuelve un orbservable que tenemos que castear para que tengamos los datos como necesitamos
+    return this._http.get<IProduct[]>('./api/products/products.json').
+      do(data => console.log('data: ' + JSON.stringify(data)))
+      .catch(this.handleError);
   }
 
+  private handleError(err: HttpErrorResponse) {
+    console.log(err.message);
+    return Observable.throw(err.message);
+  }
 }

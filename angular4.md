@@ -15,15 +15,23 @@
             - [Creación de templates y styles inline](#creación-de-templates-y-styles-inline)
         - [Ciclo de vida de un componente](#ciclo-de-vida-de-un-componente)
             - [ngOninit](#ngoninit)
+            - [ngOnChanges](#ngonchanges)
         - [Directivas](#directivas)
             - [Colecciones de elementos (Arrays) y directiva *ngFor](#colecciones-de-elementos-arrays-y-directiva-ngfor)
             - [*ngIf y "else"](#ngif-y-else)
         - [Property Binding](#property-binding)
             - [[class]](#class)
             - [Interpolación con variables en el template](#interpolación-con-variables-en-el-template)
+        - [Pipes](#pipes)
+            - [Custom Pipes](#custom-pipes)
+            - [Pipe async](#pipe-async)
         - [Intercambio de información entre componentes](#intercambio-de-información-entre-componentes)
             - [@Input](#input)
             - [@Output](#output)
+        - [Inyección de dependencias](#inyección-de-dependencias)
+        - [Observables en Angular](#observables-en-angular)
+        - [Promesas](#promesas)
+        - [Enrutamiento](#enrutamiento)
     - [TypeScript](#typescript)
         - [Instalación](#instalación)
         - [Tipado de devolución de una función](#tipado-de-devolución-de-una-función)
@@ -196,6 +204,10 @@ export class PersonaComponent implements OnInit{
 }
 ````
 
+#### ngOnChanges
+
+Se ejecuta cada vez que se modifica alguna propiedad del componente.
+
 ### Directivas
 
 #### Colecciones de elementos (Arrays) y directiva *ngFor
@@ -289,6 +301,42 @@ private _nombreUsuario: string;
 </p>
 ````
 
+### Pipes
+
+Filtros para formatear la salida de datos en las plantillas. No modifican el dato, sólo a la hora de mostrarlo. 
+
+Se pueden encadenar varios pipes.
+
+#### Custom Pipes
+
+Creación de un filtro que sustituye un caracter dado como parámetro en el filtro con espacios:
+
+`convert-to-spaces.pipe.ts`
+````typescript
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'convertToSpaces'
+})
+
+export class ConvertToSpacesPipe implements PipeTransform {
+
+  transform(value: any, character: string): any {
+    return value.replace(character, ' ');
+  }
+
+}
+````
+
+Luego para usarlo en la plantilla. El parámetro se pasa poniendo ":" y después con comillas:
+````html
+<td>{{product.code | convertToSpaces: '-'}}</td>
+````
+
+#### Pipe async
+
+El envío a la plantilla es asíncrono. Una forma de sustituir la recepción de datos de un observable, delegando la asincronía al pipe async en vez de a la lógica de la clase.
+
 ### Intercambio de información entre componentes
 
 #### @Input
@@ -311,7 +359,7 @@ import { Component, OnInit, OnChanges, Input } from '@angular/core';
 
 #### @Output
 
-Creación de un evento click, que pasa el valor de una variable al componente padre:
+Creación de un evento click, que pasa una llamada de un evento al componente padre:
 
 * **Componente padre**: `product-list.component.ts`
 * **Componente hijo**: `star.component.ts`
@@ -356,6 +404,147 @@ changeView(data: any) {
 }
 ...
 ```
+
+### Inyección de dependencias
+
+Creamos un servicio:
+
+`product.service.ts`
+````typescript
+import { Injectable } from '@angular/core';
+import { IProduct } from '../interfaces/product.interface';
+import { HttpClient } from '@angular/common/http';
+
+@Injectable()
+export class ProductService {
+  // Declaración de una constante de clase
+  static readonly IMAGETEMP: string = '';
+
+  constructor(
+    private _http: HttpClient
+  ) { }
+
+  getProducts(): Array<IProduct> {
+    // Nos devuelve un orbservable
+    // this._http.get('./api/products/products.json')
+    return null;
+  }
+}
+````
+
+Luego lo inyectamos en el constructor como parámetro y tipado de la clase donde lo vayamos a usar. Al estar inyectado como dependencia, ya no necesitamos instanciar la clase del servicio.
+
+`product-list.component.ts`
+````typescript
+import { ProductService } from './product.service';
+
+export class ProductListComponent implements OnInit {
+  ...
+  // Inyección de dependencias que inyectamos del servicio
+  // y no hace falta instanciarlo al ser un servicio y haberlo inyectado.
+  constructor(private _productService: ProductService) {
+````
+
+### Observables en Angular
+
+* http://blog.enriqueoriol.com/2017/05/comunicacion-servicio-componente-en-angular.html
+
+El agente se suscribe a la línea de tiempo, hasta que nos dessuscribimos o la aplicación termina. Cada vez que llega un evento a esta línea de tiempo, nos avisa y podemos hacer una acción. Los datos que nos llegan del evento pueden llegar en formato raw o los podemos modificar para que nos lleguen como los necesitamos.
+
+Los procesos que haya que ejecutar con los datos que se van a recibir del observable, tendremos que esperar a los datos, por lo que tendrán que estar dentro de la recepción de los mismos.
+
+`app.module.ts`
+````typescript
+import { HttpClientModule } from '@angular/common/http';
+...
+@NgModule({
+  ...
+  imports: [
+    BrowserModule, FormsModule, HttpClientModule
+  ],
+````
+
+Creas la línea de tiempo (Observable) para que luego desde los componentes se puedan suscribir para recibir los diversos eventos que sucedan.
+
+`product.service.ts`
+````typescript
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+
+import { IProduct } from '../interfaces/product.interface';
+
+@Injectable()
+export class ProductService {
+  // Declaración de una constante de clase
+  static readonly IMAGETEMP: string = '';
+
+  constructor(private _http: HttpClient) { }
+
+  getProducts(): Observable<IProduct[]> {
+    // Nos devuelve un orbservable que tenemos que castear para que tengamos los datos como necesitamos
+    return this._http.get<IProduct[]>('./api/products/products.json');
+  }
+}
+````
+
+En el componente, nos suscribimos al observable que nos devuelve el servicio, y este observable, puede acabar correctamente o no, y actuar en consecuencia.
+
+`product-list-component.ts`
+````typescript
+ngOnInit() {
+    this._productService.getProducts().subscribe((
+      products => {
+        this.products = products;
+        this.filteredProducts = this.products;
+      }), (error) => {
+        console.log('error: ', error);
+    });
+  }
+````
+
+Servicio con control de errores del observable:
+
+`product.service.ts`
+````typescript
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+// Control de los errores y debug de los observables
+import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/do';
+
+import { IProduct } from '../interfaces/product.interface';
+
+@Injectable()
+export class ProductService {
+  // Declaración de una constante de clase
+  static readonly IMAGETEMP: string = '';
+
+  constructor(private _http: HttpClient) { }
+
+  getProducts(): Observable<IProduct[]> {
+    // Nos devuelve un orbservable que tenemos que castear para que tengamos los datos como necesitamos
+    return this._http.get<IProduct[]>('./api/products/products.json').
+      do(data => console.log('data: ' + JSON.stringify(data)))
+      .catch(this.handleError);
+  }
+
+  private handleError(err: HttpErrorResponse) {
+    console.log(err.message);
+    return Observable.throw(err.message)
+  }
+}
+````
+
+### Promesas
+
+* http://www.formandome.es/javascript/promises-y-deferreds-en-jquery/
+
+Las promesas actúan con un evento específico y cuanto termina la devolución de datos (o error) termina.
+
+### Enrutamiento
 
 ## TypeScript
 

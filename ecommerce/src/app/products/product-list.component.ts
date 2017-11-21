@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IProduct } from '../interfaces/product.interface';
 import { ProductService } from './product.service';
 
+
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
@@ -40,8 +41,13 @@ export class ProductListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.products = this._productService.getProducts();
-    this.filteredProducts = this.products;
+    this._productService.getProducts()
+    .subscribe((products) => {
+        this.products = products;
+        this.filteredProducts = this.products;
+      }, (error) => {
+        console.log('error: ', error);
+    });
   }
 
   // Filtrado en el array del texto por el que queremos filtrar en la caja de texto
