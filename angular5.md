@@ -32,10 +32,6 @@
         - [Observables en Angular](#observables-en-angular)
         - [Promesas](#promesas)
         - [Enrutamiento](#enrutamiento)
-    - [TypeScript](#typescript)
-        - [Instalación](#instalación)
-        - [Tipado de devolución de una función](#tipado-de-devolución-de-una-función)
-        - [Visibilidad de variables y funciones](#visibilidad-de-variables-y-funciones)
         - [(click)](#click)
     - [angular-cli](#angular-cli)
         - [Generación](#generación)
@@ -492,15 +488,27 @@ En el componente, nos suscribimos al observable que nos devuelve el servicio, y 
 
 `product-list-component.ts`
 ````typescript
-ngOnInit() {
-    this._productService.getProducts().subscribe((
-      products => {
-        this.products = products;
-        this.filteredProducts = this.products;
-      }), (error) => {
-        console.log('error: ', error);
-    });
-  }
+import { Component, OnInit, OnDestroy } from '@angular/core';
+...
+
+
+export class ProductListComponent implements OnInit, OnDestroy {
+    subscription: any;
+
+    ngOnInit() {
+        this.subscription = this._productService.getProducts().subscribe((
+        products => {
+            this.products = products;
+            this.filteredProducts = this.products;
+        }), (error) => {
+            console.log('error: ', error);
+        });
+    }
+
+    // Nos desuscribimos del observable
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
+    }
 ````
 
 Servicio con control de errores del observable:
@@ -545,97 +553,6 @@ export class ProductService {
 Las promesas actúan con un evento específico y cuanto termina la devolución de datos (o error) termina.
 
 ### Enrutamiento
-
-## TypeScript
-
-### Instalación
-
-```bash
-npm install -g typescript
-```
-Para compilar:
-````bash
-tsc helloworld.ts
-````
-Es un **lenguaje de programación tipado**, al contrario que javascript.
-
-### Tipado de devolución de una función
-
-````javascript
-verResultado(): number{
-  return 10;
-}
-````
-
-### Visibilidad de variables y funciones
-
-Si no se pone ningún modificador de acceso, la variable es **protected**
-
-Aunque una variable sea privada, el template asociado si que tiene acceso.
-
-Por convención las variables privadas se inician su nombre con un "_".
-
-Los atributos (variables de clase) suelen ser siempre privadas y las propiedades (getter y setters) son publicas
-
-Creo un modelo Alumno, `alumno.model.ts`:
-````javascript
-export class Alumno{
-    private _nombre: string;
-    private _edad: number;
-    private _curso: string;
-
-    get nombre(): string {
-        return this._nombre;
-    }
-    
-    get edad(): number {
-        return this._edad;
-    }
-
-    get curso(): string {
-        return this._curso;
-    }
-
-    set nombre(n: string) {
-        this._nombre = n;
-    }
-
-    set edad(r: number) {
-        this._edad = r;
-    }
-
-    set curso(c: string) {
-        this._curso = c;
-    }
-
-    constructor (n:string, e:number, c:string) {
-        this._nombre = n;
-        this._edad = e;
-        this._curso = c;
-    }
-}
-````
-
-Luego para poder usarlo hay primero que importarlo en el componente que queramos usar.
-
-````javascript
-  import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-  import { Alumno } from '../../../models/alumno.model';
-  ...
-  constructor() {
-    this._nombre = 'Mauri';
-    this._alumno = new Alumno("Mauri",18,"Angular");
-  }
-
-  private verDatosAlumno(): string{
-    let datos: string;
-    datos = `El nombre del alumno de nombre ${this._alumno.nombre} 
-      de edad ${this._alumno.edad} en el curso ${this._alumno.curso}.`;
-    return datos;
-  }
-  ...
-````
-
 
 
 ### (click)

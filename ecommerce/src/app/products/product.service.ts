@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/map';
 
 import { IProduct } from '../interfaces/product.interface';
 
@@ -25,5 +26,12 @@ export class ProductService {
   private handleError(err: HttpErrorResponse) {
     console.log(err.message);
     return Observable.throw(err.message);
+  }
+
+  // Devolvemos el elmento 0 de un array que hemos filtrado del total de elementos
+  getProductById(id: number): Observable<IProduct> {
+    return this.getProducts().map( (items) => {
+      return items.find( (item) => item.id === id );
+    });
   }
 }

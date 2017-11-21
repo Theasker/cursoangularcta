@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { IProduct } from '../interfaces/product.interface';
 import { ProductService } from './product.service';
 
@@ -8,7 +8,8 @@ import { ProductService } from './product.service';
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit {
+
+export class ProductListComponent implements OnInit, OnDestroy {
   pageTitle: string = 'Lista de productos';
   private _listFilter: string;
   public products: IProduct[] = [];
@@ -16,6 +17,7 @@ export class ProductListComponent implements OnInit {
   imageWidth: number = 50;
   imageMargin: number = 2;
   shotTitle: boolean = true;
+  subscription: any;
 
   filteredProducts: Array<IProduct> = [];
 
@@ -37,17 +39,21 @@ export class ProductListComponent implements OnInit {
   constructor(
     private _productService: ProductService
   ) {
-
   }
 
   ngOnInit() {
-    this._productService.getProducts()
+    this.subscription = this._productService.getProducts()
     .subscribe((products) => {
         this.products = products;
         this.filteredProducts = this.products;
       }, (error) => {
         console.log('error: ', error);
     });
+  }
+
+  // Nos desuscribimos del observable
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   // Filtrado en el array del texto por el que queremos filtrar en la caja de texto
