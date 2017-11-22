@@ -44,7 +44,7 @@ export class ProductService {
     return new Promise( (resolve, reject) => {
       /* resolve({name: 'Procuto 10'}); */
       /* reject('No se ha encontrado el producto'); */
-      this.getProducts().subscribe( 
+      this.getProducts().subscribe(
         (data) => {
           let p = data.find((item) => item.id === id);
           if (p !== null) { // si se ha encontrado...

@@ -1,0 +1,11 @@
+[
+    {
+        "id":"1",
+        "dni":"123456789A",
+        "nombre":"nombre1",
+        "apellidos":"ape1",
+        "curso": "1º A",
+        "avatar": "https://dummyimage.com/600x400/000/fff",
+        "notas":[1,5,7,4,4,4,5,5,4]
+    }
+]
