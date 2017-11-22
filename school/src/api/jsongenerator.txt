@@ -1,0 +1,16 @@
+[
+    '{{repeat(300, 500)}}',
+    {
+      _id: '{{index()}}',
+      dni: '{{integer(17000000, 17999999)}}{{random("A","B","C")}}',
+      name: '{{firstName()}}',
+      surname: '{{surname()}} {{surname()}}',
+      curse: '{{integer(1, 7)}}-{{random("A","B","C")}}',
+      avatar: 'http://placehold.it/32x32',
+      notes: [
+        '{{repeat(0,17)}}',
+        '{{integer(1, 7)}}'
+      ],
+      isActive: '{{bool()}}'
+    }
+  ]
