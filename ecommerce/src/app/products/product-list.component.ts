@@ -42,6 +42,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log('ngOnInit_listado');
     this.subscription = this._productService.getProducts()
     .subscribe((products) => {
         this.products = products;
@@ -53,6 +54,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   // Nos desuscribimos del observable
   ngOnDestroy() {
+    console.log('ngOnDestroy_listado');
     this.subscription.unsubscribe();
   }
 

@@ -5,8 +5,27 @@
   </div>
   <div class="panel-body">
     <!-- Ponemos el producto opcional por si no ha llegado -->
-    {{product?.description}}
+    <div class="row">
+      <div class="col-md-2">
 
+      </div>
+    </div>
+
+    <ul>
+      <li>Nombre: {{product?.name}}</li>
+      <li>Código: {{product?.code}}</li>
+      <li>Descripción: {{product?.description}}</li>
+      <li>Id: {{product?.id}}</li>
+      <li><img class="img-responsive" src="{{product?.imageUrl}}" [title]="product?.name"/></li>
+      <li>Precio: {{product?.price | currency:'EUR':'symbol':'1.2-2'}}</li>
+      <li>Calificación: <app-star [rating]="product?.rating"></app-star></li>
+    </ul>
+  </div>
+  <div class="panel-footer">
+    <a href="" class="btn btn-default" (click)="back()">
+      <i class="glyphicon glyphicon-chevron-left"></i>Volver
+    </a>
+    <a [routerLink]="['/products']" class="btn btn-primary">Volver</a>
   </div>
 </div>
 

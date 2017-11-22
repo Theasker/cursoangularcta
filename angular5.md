@@ -32,7 +32,7 @@
         - [Observables en Angular](#observables-en-angular)
         - [Promesas](#promesas)
         - [Enrutamiento](#enrutamiento)
-        - [(click)](#click)
+            - [Navegación desde código](#navegación-desde-código)
     - [angular-cli](#angular-cli)
         - [Generación](#generación)
     - [Referencias oficiales y enlaces](#referencias-oficiales-y-enlaces)
@@ -552,14 +552,141 @@ export class ProductService {
 
 Las promesas actúan con un evento específico y cuanto termina la devolución de datos (o error) termina.
 
+en servicio `product.service.ts`:
+````typescript
+// Obtener un sólo registro pasando el id como parámetro con Promises
+  getProduct(id: number): Promise<IProduct> {
+    return new Promise( (resolve, reject) => {
+      /* resolve({name: 'Procuto 10'}); */
+      /* reject('No se ha encontrado el producto'); */
+      this.getProducts().subscribe( 
+        (data) => {
+          let p = data.find((item) => item.id === id);
+          if (p !== null) { // si se ha encontrado...
+            resolve(p);
+          }else { // NO ha dado error, pero no ha encontrado ningún registro
+            resolve(null);
+          }
+        }, (error) => {
+          reject('Ha habido un erro en la obtención de productos');
+        }
+      );
+    });
+  }
+````
+
+Luego hay que consumirlo en el método OnInit() del componente:
+
+`product.detail.component.ts`
+````typescript
+ngOnInit() {
+    // Obtenemos un sólo producto con el id pasado como parámetro (Promises).
+    this._productService.getProduct(id)
+      .then(
+        (data) => { // Nos devuelve el dato
+          if (data !== null) {
+            this.product = data;
+          }
+        }
+      ).catch( // Ha habido un error
+        (error) => {
+          console.log('error: ', error);
+        }
+      );
+  }
+````
+
 ### Enrutamiento
 
+Tenemos que tener la etiqueta <base href="/">en el body del index.html.
 
-### (click)
+Se puede configurar en el fichero principal del módulo `app.module.ts`:
+````typescript
+import { Routes, RouterModule } from '@angular/router';
+...
+@NgModule({
+  imports: [
+      BrowserModule,
+      ...,
+      RouterModule.forRoot([
+        { path: 'products', component: ProductListComponent },
+        { path: 'products/:id', component: ProductDetailComponent },
+        { path: '', redirectTo: 'products', pathMatch: 'full' },
+        { path: '**', redirectTo: 'products', pathMatch: 'full' }
+      ])
+    ],
+  ...
+})
+````
+También se puede hacer en otro fichero, que suele hacerse así
 
-Al hacer click en el botón, llama a la función `verResultado()`:
-````html
-<button (click)="verResultado();">Ver resultado</button>
+Creamos el fichero app.routing.ts:
+
+````typescript
+import { ModuleWithProviders } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+
+// Importar componentes
+import { EmpleadoComponent } from './empleado/empleado.component';
+import { FrutaComponent } from './fruta/fruta.component';
+import { HomeComponent } from './home/home.component';
+import { ContactoComponent } from './contacto/contacto.component';
+
+const appRoutes: Routes = [
+    {path: '', component: HomeComponent},
+    {path: 'empleado', component: EmpleadoComponent},
+    {path: 'fruta', component: FrutaComponent},
+    {path: 'home', component: HomeComponent},
+    {path: 'contacto', component: ContactoComponent},
+    {path: 'contacto/:page', component: ContactoComponent},
+    {path: '**', component: HomeComponent}
+];
+
+export const appRoutingProviders: any[] = [];
+export const routing: ModuleWithProviders = RouterModule.forRoot(appRoutes);
+````
+
+Y en app.module.ts
+
+````typescript
+...
+import { routing, appRoutingProviders } from './app.routing';
+...
+@NgModule({
+    ...
+    imports: [
+    ...
+    routing
+    ],
+    providers: [appRoutingProviders],
+    bootstrap: [AppComponent]
+})
+````
+
+En la vista tendremos que usar la directiva <router-outlet></router-outlet> que carga dentro de esta etiqueta el componente correspondiente a la ruta actual que estoy eligiendo. Con esta directiva podemos crear un menu de navegación.
+
+````http
+<nav>
+    <a [routerLink]="[ '/home' ]" routerLinkActive="activado"> Home </a> - 
+    <a [routerLink]="[ '/fruta' ]" routerLinkActive="activado"> Fruta </a> - 
+    <a [routerLink]="[ '/empleado' ]" routerLinkActive="activado"> Empleado </a> - 
+    <a [routerLink]="[ '/contacto' ]" routerLinkActive="activado"> Contacto </a>
+</nav>
+
+<hr/>
+<router-outlet></router-outlet>
+````
+
+````css
+.activado { font-weight: bold; background: yellow; }
+````
+
+Con el atributo routerLiknActive le decimos la clase o clases de css que queremos que asigne cuando estamos en la opción del menú activo, pasandole un array de strings de nombres de clases.
+
+#### Navegación desde código
+
+````typescript
+this._router.navigate(['/products']);
 ````
 
 ## angular-cli

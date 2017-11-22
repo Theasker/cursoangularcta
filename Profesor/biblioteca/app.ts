@@ -1,5 +1,6 @@
-import { Book } from './interfaces';
+import { Book, Librarian } from './interfaces';
 import { Category } from './enums';
+import { UniversityLibrarian } from './classes';
 
 
 function getAllBooks():Book[]{
@@ -31,7 +32,9 @@ function getAllBooks():Book[]{
 function getAvailableBooks(allBooks:Book[] = getAllBooks()):Book[]{
     let availableBooks:Book[] = [];
     //let allBooks:Array<any> = getAllBooks();
+    let bibliotecario:Librarian = new UniversityLibrarian();
 
+    console.log(bibliotecario.department);
     for(let book of allBooks){
         //saber si esta disponible o no
         if (book.available === true){
@@ -163,4 +166,4 @@ if (book !== null){
 */
 
 //reserva
-display(checkoutBooks('Ricardo', 1,2,7));
+display(checkoutBooks('Ricardo', 1,2,3,4,5));

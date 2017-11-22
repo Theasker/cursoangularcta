@@ -42,7 +42,7 @@
               <!-- Mínimo una cifra entera y mínimo 2 decimales y máximo 2 decimales
               con true le decimos que se vea el simbolo de la moneda
               -->
-              <td>{{product.price | currency: 'EUR':true:'1.2-2'}}</td> 
+              <td class="text-right">{{product.price | number:'1.2-2'}} €</td> 
               <!-- Pasamos como parámetro al componente hijo starComponent la variable product.rating -->
               <!-- Capturamos el evento ratingClicked() que viene del componente hijo y lo asociamos al método changeView() -->
               <td><app-star [rating]="product.rating" (ratingClicked)="changeView($event)"></app-star></td>
