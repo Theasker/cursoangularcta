@@ -33,6 +33,7 @@
         - [Promesas](#promesas)
         - [Enrutamiento](#enrutamiento)
             - [Navegación desde código](#navegación-desde-código)
+        - [Modularización de la aplicación](#modularización-de-la-aplicación)
     - [angular-cli](#angular-cli)
         - [Generación](#generación)
     - [Referencias oficiales y enlaces](#referencias-oficiales-y-enlaces)
@@ -665,7 +666,7 @@ import { routing, appRoutingProviders } from './app.routing';
 
 En la vista tendremos que usar la directiva <router-outlet></router-outlet> que carga dentro de esta etiqueta el componente correspondiente a la ruta actual que estoy eligiendo. Con esta directiva podemos crear un menu de navegación.
 
-````http
+````html
 <nav>
     <a [routerLink]="[ '/home' ]" routerLinkActive="activado"> Home </a> - 
     <a [routerLink]="[ '/fruta' ]" routerLinkActive="activado"> Fruta </a> - 
@@ -688,6 +689,41 @@ Con el atributo routerLiknActive le decimos la clase o clases de css que queremo
 ````typescript
 this._router.navigate(['/products']);
 ````
+
+### Modularización de la aplicación
+
+Para poder separar los componentes "externos" de los de la misma aplicación crearemos otro módulo
+
+Tenemos que importar `CommonModule` cuando el módulo no es el principal.
+
+`./app/shared/shared.module.ts`
+````typescript
+import { NgModule } from '@angular/core';
+// Módulo que hay que cargar para este segundo módulo
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { StarComponent } from './star.component';
+
+@NgModule({
+  declarations: [
+    StarComponent
+  ],
+  imports: [
+    CommonModule,
+    FormsModule
+  ]
+})
+export class SharedModule { }
+````
+
+Luego en la configuración del módulo principal `app.module.ts`
+
+````typescript
+
+````
+
+Para poder usar los componentes de un módulo hay que exportarlos en el decorador @NgModule con la propiedad `exports`. Puede que algunos módulos no se usen en el módulo `sharedModule` y al no necesitarlo, no lo pondremos en `imports`, pero puede que algún módulo que lo use si que lo necesite, y por eso lo pondremos en `exports`.
 
 ## angular-cli
 
