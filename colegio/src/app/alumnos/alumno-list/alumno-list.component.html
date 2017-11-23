@@ -11,7 +11,12 @@
           <input class="form-control" [(ngModel)]="listFilter" type="text" name="" id="">
         </div>
       </div>
-      <button class="btn btn-primary block" (click)="nuevoAlumno()">Alta alumno</button>
+      <div class="row">
+        <div class="col-md-6">
+            <button class="btn btn-primary block" (click)="nuevoAlumno()">Alta alumno</button>
+        </div>
+      </div>
+      
       <div *ngIf="_alumnos && _alumnos.length" class="table-responsive" [style.margin-top.px]="15">
         <!-- Table -->
         <table class="table table-striped table-hover table-condensed">
@@ -29,10 +34,10 @@
             <tr *ngFor="let alumno of _alumnosFiltrados">
               <td><img [src]="alumno?.avatar" [title]="alumno?.name" /></td>
               <td><a (click)="onClick(alumno)">{{alumno?.dni | uppercase}}</a></td>
-              <td>{{alumno?.nombre}}</td>
+              <td>{{alumno?.name}}</td>
               <td>{{alumno?.surname}}</td>
               <td>{{alumno?.curse}}</td>
-              <td>{{alumno?.notes}}</td> 
+              <td>{{alumno?.notes}} (AV: <strong>{{alumno?.notes | average | number:'1.2-2'}}</strong>)</td> 
             </tr>
           </tbody>
         </table>

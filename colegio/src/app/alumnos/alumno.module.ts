@@ -6,11 +6,13 @@ import { FormsModule } from '@angular/forms';
 import { AlumnoListComponent } from './alumno-list/alumno-list.component';
 import { AlumnoDetailComponent } from './alumno-detail/alumno-detail.component';
 import { AlumnoService } from './services/alumno.service';
+import { AveragePipe } from '../shared/pipes/average.pipe';
 
 @NgModule({
   declarations: [
     AlumnoListComponent,
-    AlumnoDetailComponent
+    AlumnoDetailComponent,
+    AveragePipe
   ],
   imports: [
     CommonModule,
