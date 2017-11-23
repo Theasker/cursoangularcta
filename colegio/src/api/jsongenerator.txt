@@ -1,0 +1,15 @@
+[
+  '{{repeat(300, 500)}}',
+  {
+    id: '{{index()}}',
+    dni: '{{integer(17000000, 17999999)}}{{random("A","B","C")}}',
+    nombre: '{{firstName()}}',
+    apellidos: '{{surname()}} {{surname()}}',
+    curso: '{{integer(1, 7)}}-{{random("A","B","C")}}',
+    avatar: 'http://placehold.it/32x32',
+    notas: [
+      '{{repeat(0,17)}}',
+      '{{integer(1, 7)}}'
+    ]
+  }
+]

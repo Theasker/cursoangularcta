@@ -34,6 +34,9 @@
         - [Enrutamiento](#enrutamiento)
             - [Navegación desde código](#navegación-desde-código)
         - [Modularización de la aplicación](#modularización-de-la-aplicación)
+        - [Entradas de datos](#entradas-de-datos)
+        - [Formuarios](#formuarios)
+            - [Formuarios reactivos](#formuarios-reactivos)
     - [angular-cli](#angular-cli)
         - [Generación](#generación)
     - [Referencias oficiales y enlaces](#referencias-oficiales-y-enlaces)
@@ -724,6 +727,12 @@ Luego en la configuración del módulo principal `app.module.ts`
 ````
 
 Para poder usar los componentes de un módulo hay que exportarlos en el decorador @NgModule con la propiedad `exports`. Puede que algunos módulos no se usen en el módulo `sharedModule` y al no necesitarlo, no lo pondremos en `imports`, pero puede que algún módulo que lo use si que lo necesite, y por eso lo pondremos en `exports`.
+
+### Entradas de datos
+
+### Formuarios
+
+#### Formuarios reactivos
 
 ## angular-cli
 

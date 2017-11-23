@@ -1,3 +1,6 @@
-<p>
-  alumno-detail works!
-</p>
+<div class="panel panel-default" *ngIf="alumno">
+  <div class="panel-heading"><h4>Detalle del alumno</h4></div>
+    <div class="panel-body">
+      <h1>{{alumno?.dni}}</h1>
+    </div>
+</div>
