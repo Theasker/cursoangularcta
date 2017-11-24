@@ -40,6 +40,7 @@
     - [angular-cli](#angular-cli)
         - [Generación](#generación)
     - [Referencias oficiales y enlaces](#referencias-oficiales-y-enlaces)
+        - [Librerías](#librerías)
 
 <!-- /TOC -->
 
@@ -752,3 +753,8 @@ Profesor: **`ricardo.jaume@pue.es`**
 * Documentación oficial de Angular en https://angular.io/
 * Documentación oficial de Typescript en http://www.typescriptlang.org/docs/home.html
 * [Angular-cli](https://cli.angular.io/)
+
+### Librerías
+
+* https://d3js.org/
+* http://visjs.org/
