@@ -13,7 +13,7 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
   private _alumno: IAlumno;
   private _alumnos: IAlumno[];
   private _alumnosFiltrados: IAlumno[];
-  private _alumnosOrdenados: IAlumno[];
+  private _alumnosFiltradosOrdenados: IAlumno[];
   private _subscription: any;
   private _listFilter: string;
   private _tipoForm: string; // Variable para el tipo de formulario (alta o edición)
@@ -34,6 +34,8 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
     // Comprobamos que hay algo escrito en la caja de busqueda
     // para aplicar el filtro o no aplicarlo y mostrar todos los productos
     this._alumnosFiltrados = this.listFilter ? this.performFilter(this._listFilter) : this._alumnos;
+    this._alumnosFiltrados = this.orderByAverage(this._alumnosFiltrados);
+    console.log('this._alumnosFiltrados: ', this._alumnosFiltrados);
   }
 
   // Filtrado en el array del texto por el que queremos filtrar en la caja de texto
@@ -44,7 +46,7 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  orderByAverage(): IAlumno[] {
+  orderByAverage(alumnos: IAlumno[]): IAlumno[] {
     /*
     var items = [
       { name: 'Edward', value: 21 },
@@ -74,7 +76,28 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
     return null;
     */
     // this._alumnos;
-    return null;
+
+    alumnos.sort(
+      (a: IAlumno, b: IAlumno) => {
+        // Calculamos la media de el objeto actual y el aterior (a, b)
+        let averageA: number;
+        let averageB: number;
+        averageA = a.notes.reduce( (valorAnterior, valorActual, indice, vector) => {
+          return valorAnterior + valorActual;
+        },0);
+        averageA = averageA / a.notes.length;
+        averageB = b.notes.reduce( (valorAnterior, valorActual, indice, vector) => {
+          return valorAnterior + valorActual;
+        },0);
+        averageB = averageB / b.notes.length;
+
+        // Hacemos la comparación para ordenar
+        if (averageA > averageB) return 1;
+        if (averageA < averageB) return -1;
+        return 0;
+      }
+    );
+    return alumnos;
   }
 
   ngOnInit() {
