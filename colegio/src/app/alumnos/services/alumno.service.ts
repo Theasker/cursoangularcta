@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 
 import 'rxjs/add/observable/of';
 
@@ -10,8 +11,10 @@ import { IAlumno } from '../interfaces/alumno.interface';
 @Injectable()
 export class AlumnoService {
   // Declaración de una constante de clase
+  // static readonly APIURL: string = 'http://localhost:3000/alumns?_page=1';
   static readonly APIURL: string = 'http://localhost:3000/alumns';
   alumnos: IAlumno[];
+  private subject: Subject<IAlumno[]> = new Subject<IAlumno[]>();
 
   constructor(
     private _http: HttpClient
@@ -19,6 +22,7 @@ export class AlumnoService {
     this._http.get<IAlumno[]>(AlumnoService.APIURL).subscribe(
       (data) => {
         this.alumnos = data;
+        this.subject.next(this.alumnos);
         localStorage.setItem('alumnos', JSON.stringify(this.alumnos));
       }
     );
@@ -26,7 +30,10 @@ export class AlumnoService {
 
   getAlumnos(): Observable<IAlumno[]> {
     this.alumnos = JSON.parse(localStorage.getItem('alumnos')) || [];
-    return Observable.of(this.alumnos);
+    // Inicializamos el array de Subject para que nos observe los posibles cambios
+    // Hace un evento push cuando hay una modificación cuando hacemos next.
+    return this.subject.asObservable();
+    // return Observable.of(this.alumnos);
   }
 
   setAlumno(al: IAlumno): Observable<boolean> {
@@ -38,6 +45,8 @@ export class AlumnoService {
       this.alumnos.push(al);
       // 3. Persistir la colección modificada
       localStorage.setItem('alumnos', JSON.stringify(this.alumnos));
+      // Avisamos que hay un cambio para que el componente reaccione al cambio.
+      this.subject.next(this.alumnos);
       return Observable.of(true);
     }catch (ex) {
       return Observable.of(false);
@@ -56,8 +65,12 @@ export class AlumnoService {
     if (alumno !== null) {
       const index = this.alumnos.indexOf(alumno);
       this.alumnos[index] = al;
+
+      // Avisamos que hay un cambio para que el componente reaccione al cambio.
+      this.subject.next(this.alumnos);
+
       // 3. Persistir la colección modificada
-      localStorage.setItem('alumnos',JSON.stringify(this.alumnos));
+      localStorage.setItem('alumnos', JSON.stringify(this.alumnos));
     }
     return Observable.of(true);
   }
@@ -73,9 +86,14 @@ export class AlumnoService {
     );
     if (alumno !== null) {
       const index = this.alumnos.indexOf(alumno);
-      this.alumnos.slice(index, 1);
+      this.alumnos.splice(index, 1);
+
+      // Avisamos del cambio para que refresque sólo elemento ese elmento en la vista.
+      this.subject.next(this.alumnos);
+
       // 3. Persistir la colección modificada
-      localStorage.setItem('alumnos',JSON.stringify(this.alumnos));
+      localStorage.setItem('alumnos', JSON.stringify(this.alumnos));
+
     }
     return Observable.of(true);
   }

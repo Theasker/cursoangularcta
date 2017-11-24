@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, OnChanges } from '@angular/core';
-import { IAlumno } from '../interfaces/alumno.interface';
+import { Router } from '@angular/router';
 
+import { IAlumno } from '../interfaces/alumno.interface';
 import { AlumnoService } from '../services/alumno.service';
 
 @Component({
@@ -15,9 +16,11 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
   private _alumnosOrdenados: IAlumno[];
   private _subscription: any;
   private _listFilter: string;
+  private _tipoForm: string; // Variable para el tipo de formulario (alta o edición)
 
   constructor(
     private _alumnoService: AlumnoService,
+    private _router: Router
   ) { }
 
   public get listFilter(): string{
@@ -70,7 +73,7 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
     average = average / numbers.length;
     return null;
     */
-    this._alumnos;
+    // this._alumnos;
     return null;
   }
 
@@ -86,7 +89,7 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges() {
-    
+
   }
 
   ngOnDestroy(): void {
@@ -98,20 +101,40 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   nuevoAlumno() {
-    const alumno: IAlumno = {
-      id: 7,
-      dni: 'xxx',
-      name: 'xxxnombre',
-      surname: 'xxxapellido',
-      curse: '2 C',
-      avatar: 'http://placehold.it/32x32',
-      notes: [1, 3, 4]
-    };
+    this._router.navigate(['/formulario']);
+  }
 
-    this._alumnoService.setAlumno(alumno).subscribe(
+  borrarAlumno(dni: string) {
+    this._alumnoService.removeAlumno(dni).subscribe(
+      result => {
+        console.log('result: ', 'Operación de borrado de alumno correcta');
+      }
+    );
+  }
+
+  editarAlumno(alumno: IAlumno) {
+    /*
+      interface IAlumno {
+      id: number;
+      dni: string;
+      name: string;
+      surname: string;
+      curse: string;
+      avatar: string;
+      notes: number[];
+    }
+    */
+    console.log('alumno: ', alumno);
+    alumno.name = 'xxx';
+    alumno.surname = 'aaaa aaaa';
+    alumno.curse = '3 C';
+
+    this._alumnoService.updateAlumno(alumno).subscribe(
       result => {
         if (result) {
-          
+          console.log('result: ', 'Operación de edición completa');
+        }else {
+          console.log('result: ', 'Error en la modificación');
         }
       }
     );
