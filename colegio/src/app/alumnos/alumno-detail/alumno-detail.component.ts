@@ -24,7 +24,6 @@ export class AlumnoDetailComponent implements OnInit {
     this._route.params.subscribe(
       (data) => {
         this._id = Number(data.id);
-        console.log('data: ', data);
       }, (error) => {
         console.log('error: ', error);
       }

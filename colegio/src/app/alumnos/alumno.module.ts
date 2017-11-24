@@ -22,7 +22,8 @@ import { AlumnoAddEditComponent } from './alumno-add-edit/alumno-add-edit.compon
     RouterModule.forChild([
       { path: 'alumnos', component: AlumnoListComponent },
       { path: 'alumnos/:id', component: AlumnoListComponent },
-      { path: 'formulario', component: AlumnoAddEditComponent }
+      { path: 'formulario', component: AlumnoAddEditComponent },
+      { path: 'formulario/:alumno', component: AlumnoAddEditComponent }
     ])
   ],
   providers: [AlumnoService],

@@ -136,31 +136,6 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   editarAlumno(alumno: IAlumno) {
-    /*
-      interface IAlumno {
-      id: number;
-      dni: string;
-      name: string;
-      surname: string;
-      curse: string;
-      avatar: string;
-      notes: number[];
-    }
-    */
-    console.log('alumno: ', alumno);
-    alumno.name = 'xxx';
-    alumno.surname = 'aaaa aaaa';
-    alumno.curse = '3 C';
-
-    this._alumnoService.updateAlumno(alumno).subscribe(
-      result => {
-        if (result) {
-          console.log('result: ', 'Operación de edición completa');
-        }else {
-          console.log('result: ', 'Error en la modificación');
-        }
-      }
-    );
+    this._router.navigate(['/formulario', alumno]);
   }
-
 }
