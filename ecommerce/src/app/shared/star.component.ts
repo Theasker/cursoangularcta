@@ -17,7 +17,7 @@ export class StarComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this._nstar = [true,true,true,true,true];
+    this._nstar = [true, true, true, true, true];
   }
 
   // Se ejecuta cuando cambia alguna de las propiedades de la clase

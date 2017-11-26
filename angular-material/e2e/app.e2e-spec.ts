@@ -1,6 +1,6 @@
 import { AppPage } from './app.po';
 
-describe('alboom App', () => {
+describe('angular-material App', () => {
   let page: AppPage;
 
   beforeEach(() => {

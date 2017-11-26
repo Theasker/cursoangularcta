@@ -5,7 +5,7 @@ import { ProductListComponent } from './product-list.component';
 import { ProductDetailComponent } from './product-detail.component';
 import { ConvertToSpacesPipe } from '../shared/convert-to-spaces.pipe';
 import { ProductService } from './product.service';
-// Al importar SharedModule ya incluye el módulo CommonModule 
+// Al importar SharedModule ya incluye el módulo CommonModule
 import { SharedModule } from './../shared/shared.module';
 
 @NgModule({

@@ -23,7 +23,7 @@ import { AlumnoAddEditComponent } from './alumno-add-edit/alumno-add-edit.compon
       { path: 'alumnos', component: AlumnoListComponent },
       { path: 'alumnos/:id', component: AlumnoListComponent },
       { path: 'formulario', component: AlumnoAddEditComponent },
-      { path: 'formulario/:alumno', component: AlumnoAddEditComponent }
+      { path: 'formulario/:dni', component: AlumnoAddEditComponent }
     ])
   ],
   providers: [AlumnoService],

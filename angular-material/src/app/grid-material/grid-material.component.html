@@ -1,0 +1,9 @@
+<mat-grid-list cols="5" rowHeight="200px">
+    <mat-grid-tile 
+      *ngFor="let foto of ( _fotos ? _fotos.slice(0, 10) : [] ); let i = index" 
+      [style.background]="lightgrey">
+        <img mat-card-image src="{{foto.url}}" alt="" >
+        <mat-grid-tile-header>{{foto.id}}</mat-grid-tile-header>
+        <mat-grid-tile-footer>{{foto.title}}</mat-grid-tile-footer>
+    </mat-grid-tile>
+  </mat-grid-list>

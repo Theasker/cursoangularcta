@@ -47,53 +47,23 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   orderByAverage(alumnos: IAlumno[]): IAlumno[] {
-    /*
-    var items = [
-      { name: 'Edward', value: 21 },
-      { name: 'Sharpe', value: 37 },
-      { name: 'And', value: 45 },
-      { name: 'The', value: -12 },
-      { name: 'Magnetic' },
-      { name: 'Zeros', value: 37 }
-    ];
-    items.sort(function (a, b) {
-      if (a.name > b.name) {
-        return 1;
-      }
-      if (a.name < b.name) {
-        return -1;
-      }
-      // a must be equal to b
-      return 0;
-    });
-    */
-    /*
-    let average: number = 0;
-    average = numbers.reduce( (valorAnterior, valorActual, indice, vector) => {
-      return valorAnterior + valorActual;
-    },0)
-    average = average / numbers.length;
-    return null;
-    */
-    // this._alumnos;
-
-    alumnos.sort(
+     alumnos.sort(
       (a: IAlumno, b: IAlumno) => {
         // Calculamos la media de el objeto actual y el aterior (a, b)
         let averageA: number;
         let averageB: number;
         averageA = a.notes.reduce( (valorAnterior, valorActual, indice, vector) => {
           return valorAnterior + valorActual;
-        },0);
+        }, 0);
         averageA = averageA / a.notes.length;
         averageB = b.notes.reduce( (valorAnterior, valorActual, indice, vector) => {
           return valorAnterior + valorActual;
-        },0);
+        }, 0);
         averageB = averageB / b.notes.length;
 
         // Hacemos la comparación para ordenar
-        if (averageA > averageB) return 1;
-        if (averageA < averageB) return -1;
+        if (averageA > averageB) { return 1; }
+        if (averageA < averageB) { return -1; }
         return 0;
       }
     );
@@ -104,7 +74,7 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
     this._subscription = this._alumnoService.getAlumnos().subscribe(
       (alumnos) => {
         this._alumnos = alumnos;
-        this._alumnosFiltrados = alumnos;
+        this._alumnosFiltrados = this.orderByAverage(alumnos);
       }, (error) => {
         console.log('Error al recuperar los datos: ', error);
       }
@@ -136,6 +106,7 @@ export class AlumnoListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   editarAlumno(alumno: IAlumno) {
+    console.log('alumno: ', alumno);
     this._router.navigate(['/formulario', alumno]);
   }
 }

@@ -12,6 +12,7 @@ import { AlumnoService } from '../services/alumno.service';
 
 export class AlumnoAddEditComponent implements OnInit {
   private _alumno: IAlumno;
+  private _alumnos: IAlumno[];
 
   constructor(
     private _route: ActivatedRoute,
@@ -24,10 +25,18 @@ export class AlumnoAddEditComponent implements OnInit {
     // Obtenemos el parámetro
     this._route.params.subscribe(
       (data) => {
-        console.log('data: ', data);
+        if (data.dni) {
+          console.log('this._alumnoService.alumnos: ', this._alumnoService.alumnos);
 
-        this._alumno = data.alumno; 
-        console.log('this._alumno: ', this._alumno);
+          this._alumnoService.getAlumnos().subscribe(
+            (alumnos) => {
+              this._alumnos = alumnos;
+            }, (error) => {
+              console.log(`error: No ha podido recuperarse los alumnos -> ${error}`);
+            }
+          );
+          console.log('this._alumnos: ', this._alumnos);
+        }
       }
     );
   }
