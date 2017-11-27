@@ -1,0 +1,29 @@
+<h2 md-dialog-title>MY DIALOG</h2>
+
+<mat-card class="example-card">
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title>{{_foto?.title}}</mat-card-title>
+    <!-- <mat-card-subtitle>Dog Breed</mat-card-subtitle> -->
+  </mat-card-header>
+  <img mat-card-image [src]="_foto?.url" [alt]="_foto?.title">
+  <mat-card-content>
+    <p>
+      {{_foto?.title}}
+    </p>
+  </mat-card-content>
+  <mat-card-actions>      
+    <button mat-button>
+      <mat-icon>face</mat-icon>
+    </button>
+    <button mat-button>
+        <mat-icon>favorite</mat-icon> Me gusta
+    </button>
+  </mat-card-actions>
+  <mat-card-footer>
+    <button mat-button (click)="onNoClick()"><mat-icon>replay</mat-icon> Volver</button>    
+  </mat-card-footer>
+</mat-card>
+
+
+

@@ -15,4 +15,8 @@ export class FotosService {
     return this._http.get<any[]>(FotosService.APIURL);
   }
 
+  public getFoto(id: number): Observable<any> {
+    return this._http.get<any>(FotosService.APIURL + `/${id}`);
+  }
+
 }

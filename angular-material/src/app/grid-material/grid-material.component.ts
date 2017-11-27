@@ -1,6 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { FotosService } from '../fotos.service';
+import { FotoDetailComponent } from '../foto-detail/foto-detail.component';
 
 @Component({
   selector: 'app-grid-material',
@@ -12,7 +14,8 @@ export class GridMaterialComponent implements OnInit, OnDestroy {
   private _subscription: any;
 
   constructor(
-    private _fotosService: FotosService
+    private _fotosService: FotosService,
+    public dialog: MatDialog
   ) {  }
 
   ngOnInit() {
@@ -29,4 +32,15 @@ export class GridMaterialComponent implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
+  openFoto(id: number): void {
+      const dialogRef = this.dialog.open( FotoDetailComponent, {
+      width: '450px',
+      data: {id: id}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      // this.animal = result;
+    });
+  }
 }

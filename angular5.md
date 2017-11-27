@@ -733,7 +733,27 @@ Para poder usar los componentes de un módulo hay que exportarlos en el decorado
 
 ### Formuarios
 
+Usan etiquetas de binding como ngForm, ngModel, ngModelGroup
+
+En el template:
+
+
+
 #### Formuarios reactivos
+
+Se usan las **directivas** `formGroup`, `formControl`, `formControlName`, `formGroupName` y `formArrayName`.
+
+Se basa en la reacción de cada uno de los datos
+
+Primero hay que importar `ReactiveFormModule` en el `AppModule.ts`. Luego en el componente, ya podemos importar lo que vamos a usar, `FormGroup`, `FormControl`.
+
+````typescript
+
+````
+
+Asignación de valores a campos de formularios:
+
+Podemos usar los observables para "visualizar" los estados de un campo o varios campos de un formulario.
 
 ## angular-cli
 
