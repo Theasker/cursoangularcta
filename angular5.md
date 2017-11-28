@@ -37,6 +37,11 @@
         - [Entradas de datos](#entradas-de-datos)
         - [Formuarios](#formuarios)
             - [Formuarios reactivos](#formuarios-reactivos)
+            - [ViewChildren / ViewChild](#viewchildren--viewchild)
+            - [FormBuilder con validadores](#formbuilder-con-validadores)
+            - [Carga de los datos en un formulario](#carga-de-los-datos-en-un-formulario)
+            - [Suscripción para suscribir a las modificaciones de los campos del formulario](#suscripción-para-suscribir-a-las-modificaciones-de-los-campos-del-formulario)
+        - [Servicios GUARD](#servicios-guard)
     - [angular-cli](#angular-cli)
         - [Generación](#generación)
     - [Referencias oficiales y enlaces](#referencias-oficiales-y-enlaces)
@@ -452,6 +457,8 @@ export class ProductListComponent implements OnInit {
 
 El agente se suscribe a la línea de tiempo, hasta que nos dessuscribimos o la aplicación termina. Cada vez que llega un evento a esta línea de tiempo, nos avisa y podemos hacer una acción. Los datos que nos llegan del evento pueden llegar en formato raw o los podemos modificar para que nos lleguen como los necesitamos.
 
+**Hasta que no nos suscribimos no se ejecuta nada**
+
 Los procesos que haya que ejecutar con los datos que se van a recibir del observable, tendremos que esperar a los datos, por lo que tendrán que estar dentro de la recepción de los mismos.
 
 `app.module.ts`
@@ -751,9 +758,100 @@ Primero hay que importar `ReactiveFormModule` en el `AppModule.ts`. Luego en el 
 
 ````
 
+<input class="form-control" 
+                                id="productNameId" 
+                                type="text" 
+                                placeholder="Name (required)" 
+                                formControlName="productName"
+                                 />
+
+<form class="form-horizontal"
+  novalidate
+  (ngSubmit)="saveProduct()"
+  [formGroup]="productForm"
+    >
+
 Asignación de valores a campos de formularios:
 
 Podemos usar los observables para "visualizar" los estados de un campo o varios campos de un formulario.
+
+#### ViewChildren / ViewChild
+
+Forma de tener en código algunos elementos que están en la template.
+    Crea una coleccion de elementos de tipo FormControlName para poder acceder directamente
+    con ese elemento en el DOM y los pondrá en un array llamado 'formInputElements' 
+    de tipo genérico 'ElementRef'.
+    Sólo los elementos que hayamos puesto con el atributo 'FormControlName'
+````typescript    
+@ViewChildren(FormControlName, { read: ElementRef }) formInputElements: ElementRef[];
+@ViewChild(StarRating) star: StarRating;
+````
+
+#### FormBuilder con validadores
+
+Primero lo importamos y luego lo inyectamos
+````typescript
+this.fb.group({
+  productName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+  productCode: ['',Validators.required],
+  starRating: [''],
+  tags: this.fb.array([]),
+  description: ''
+});
+````
+
+#### Carga de los datos en un formulario
+
+Para setear parte de los campos de un formulario:
+````typescript
+this.productForm.patchValue({ 
+  productName: this.product.productName,
+  productCode: this.product.productCode,
+  starRating: this.product.starRating,
+  description: this.product.description,
+});
+````
+
+Para setear todos los camos de un formulario se usa el método **`setValue`**.
+
+Para setear un campo que es un array:
+
+````typescript
+this.productForm.setControl('tags', this.fb.array(this.product.tags || []));
+````
+
+#### Suscripción para suscribir a las modificaciones de los campos del formulario
+
+````typescript
+// Método del ciclo de vida del Angular que se ejecuta cuando se han cargado todas las vistas del componente
+ngAfterViewInit(): void {
+  //TODO
+  // Control de eventos 'pérdida de foco'
+  // Vamos a suscribirnos a los cambios de los elementos del formulario que transformaremos con 'map'
+  let controlBlurs: Observable<FormControl>[] = this.formInputElements.map(
+    (formControl: ElementRef) => {
+        // Nos vamos a suscribir a cada elemento que pierda el foco y lo ponemos en un array llamado controlBlurs
+        return Observable.fromEvent(formControl.nativeElement, 'blur');
+    }
+  );
+
+  // Mezclamos el array de observables de pérdida de foco con los cambios de cualquier dato de los inputs
+  let array: Observable<FormControl>[] = [this.productForm.valueChanges, ...controlBlurs];
+
+  // Mezclamos los 2 observables de tiempo que ya están juntados en el array, porque tienen2 tipos de eventos diferentes
+  // Esperamos 800 milisegundos entre evento y evento
+  Observable.merge(array).debounceTime(800).subscribe(
+    value => {
+        this.displayMessage = this.genericValidator.processMessages(this.productForm);
+    }
+  );
+}
+````
+
+### Servicios GUARD
+
+Servicios que controlan la salida y entrada de un componente. Por ejemplo, controla que salimos de un formulario sin guardar los datos, para que saque un diálogo de aviso al usuario.
+
 
 ## angular-cli
 
@@ -776,5 +874,6 @@ Profesor: **`ricardo.jaume@pue.es`**
 
 ### Librerías
 
-* https://d3js.org/
-* http://visjs.org/
+* Librerías para gráficos
+  * https://d3js.org/
+  * http://visjs.org/

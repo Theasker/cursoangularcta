@@ -22,8 +22,8 @@ export class ProductEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
     pageTitle: string = 'Product Edit';
     errorMessage: string;
-    //TODO: declaración del formulario 'reactivo'
-    
+    // TODO: declaración del formulario 'reactivo'
+
 
     product: IProduct;
     private sub: Subscription;
