@@ -26,6 +26,7 @@ export class ProductListComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        debugger;
         this.productService.getProducts()
                 .subscribe(products => this.products = products,
                            error => this.errorMessage = <any>error);

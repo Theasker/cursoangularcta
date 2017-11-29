@@ -15,6 +15,8 @@ import { ProductFilterPipe } from './product-filter.pipe';
 import { ProductService } from './product.service';
 
 import { SharedModule } from '../shared/shared.module';
+// Servicios Guard
+import { ProductDetailGuard, ProductEditGuard } from './product-guard.service';
 
 @NgModule({
   imports: [
@@ -23,8 +25,16 @@ import { SharedModule } from '../shared/shared.module';
     InMemoryWebApiModule.forRoot(ProductData),
     RouterModule.forChild([
       { path: 'products', component: ProductListComponent },
-      { path: 'product/:id', component: ProductDetailComponent},
-      { path: 'productEdit/:id', component: ProductEditComponent },
+      {
+        path: 'product/:id',
+        canActivate: [ProductDetailGuard],
+        component: ProductDetailComponent
+      },
+      { 
+        path: 'productEdit/:id',
+        canDeactivate: [ProductEditGuard],
+        component: ProductEditComponent 
+      },
     ])
   ],
   declarations: [
@@ -35,6 +45,8 @@ import { SharedModule } from '../shared/shared.module';
   ],
   providers: [
     ProductService,
+    ProductDetailGuard,
+    ProductEditGuard
   ]
 })
 export class ProductModule {}
