@@ -42,6 +42,8 @@
             - [Carga de los datos en un formulario](#carga-de-los-datos-en-un-formulario)
             - [Suscripción para suscribir a las modificaciones de los campos del formulario](#suscripción-para-suscribir-a-las-modificaciones-de-los-campos-del-formulario)
         - [Servicios GUARD](#servicios-guard)
+        - [Debug](#debug)
+        - [Patrón redux / ngrx](#patrón-redux--ngrx)
     - [angular-cli](#angular-cli)
         - [Generación](#generación)
     - [Referencias oficiales y enlaces](#referencias-oficiales-y-enlaces)
@@ -755,9 +757,6 @@ Se basa en la reacción de cada uno de los datos
 Primero hay que importar `ReactiveFormModule` en el `AppModule.ts`. Luego en el componente, ya podemos importar lo que vamos a usar, `FormGroup`, `FormControl`.
 
 ````typescript
-
-````
-
 <input class="form-control" 
                                 id="productNameId" 
                                 type="text" 
@@ -770,6 +769,7 @@ Primero hay que importar `ReactiveFormModule` en el `AppModule.ts`. Luego en el 
   (ngSubmit)="saveProduct()"
   [formGroup]="productForm"
     >
+````
 
 Asignación de valores a campos de formularios:
 
@@ -850,7 +850,97 @@ ngAfterViewInit(): void {
 
 ### Servicios GUARD
 
-Servicios que controlan la salida y entrada de un componente. Por ejemplo, controla que salimos de un formulario sin guardar los datos, para que saque un diálogo de aviso al usuario.
+Servicios que controlan la salida y entrada de un componente en el sistema de routing. Por ejemplo, controla que salimos de un formulario sin guardar los datos, para que saque un diálogo de aviso al usuario. Son protección de la navegación, como protección de acceso a partes de la aplicación donde no tengo permiso si no está autenticado.
+
+Los **Guard** se ejecutan antes del routing para poder protegerlo.
+
+````typescript
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, Router, CanActivate, CanDeactivate } from '@angular/router';
+import { ProductEditComponent } from './product-edit.component';
+
+@Injectable()
+export class ProductDetailGuard implements CanActivate {
+    constructor(
+        private router: Router
+    ){}
+
+    canActivate(route: ActivatedRouteSnapshot): boolean  {
+        /* 
+            http://localhost:4200/products/1
+            route.ur[0] = products
+            route.ur[1] = 1
+         */
+        // el + castea a number
+        const id = +route.url[1].path;
+
+        if (isNaN(id) || id < 1) {
+            console.log('Id inválido');
+            // Vuelvo al listado
+            this.router.navigate(['\products']);
+            // Si no se cumple el criterio de validación se devuelve false y se interrumpe la navegación
+            return false;
+        }
+        // Se cumple el criterio de la navegación
+        return true;
+    }
+}
+
+@Injectable()
+export class ProductEditGuard implements CanDeactivate<ProductEditComponent> {
+    canDeactivate(component: ProductEditComponent): boolean  {
+        /* 
+        avisar al usuario al salir del formulario de edición 
+        habiendo hecho cambios sin guardar
+        */
+        // Comprobamos si se ha modificado el formulario
+        if (component.productForm.dirty) {
+            const productName = component.productForm.get('productName').value;
+            return confirm(`¿Está seguro de cancelar sin guardar los datos del producto ${productName}?`);
+        }
+        return true;
+    }
+}
+````
+
+Tenemos que importarlo en el módulo que corresponda:
+````typescript
+// Servicios Guard
+import { ProductDetailGuard, ProductEditGuard } from './product-guard.service';
+
+@NgModule({
+  imports: [
+    ...
+    RouterModule.forChild([
+      ...,
+      {
+        path: 'product/:id',
+        canActivate: [ProductDetailGuard],
+        component: ProductDetailComponent
+      },
+      { 
+        path: 'productEdit/:id',
+        canDeactivate: [ProductEditGuard],
+        component: ProductEditComponent 
+      },
+    providers: [
+      ...,
+      ProductDetailGuard,
+      ProductEditComponent
+    ]
+````
+
+Puede devolver un boolean, un Observable de un boolean o un Promise de un boolean. 
+
+Si no se cumple el criterio se devuelve false y sino true.
+
+### Debug
+
+Usando la palabra **`debugger;`** en el sitio donde queramos parar la ejecución.
+
+### Patrón redux / ngrx
+
+
 
 
 ## angular-cli
@@ -861,6 +951,8 @@ Servicios que controlan la salida y entrada de un componente. Por ejemplo, contr
 * Generación de un componente en una carpeta: `ng generate component components/second-component`
 * Generación de un componente sin carpeta y diciendole donde: `ng generate component components/second-component --flat --spec false` (no creamos el fichero de testing *.spec.ts).
 * Crear un Custom Pipe: `ng generate pipe shared/convert-to-spaces`
+
+
 
 ## Referencias oficiales y enlaces
 
@@ -877,3 +969,10 @@ Profesor: **`ricardo.jaume@pue.es`**
 * Librerías para gráficos
   * https://d3js.org/
   * http://visjs.org/
+
+* IDE Intelij (il)
+http://idea.iteblog.com/key.php
+
+Nuestro amigo el chino: http://blog.lanyus.com/
+
+* Angular 4: Pedro J. Jiménez Castellar

@@ -6,7 +6,7 @@
         <!-- <a [routerLink]="['/fotos',foto.id]">
           <img mat-card-image src="{{foto.url}}" alt="" >
         </a> -->        
-          <a (click)="openFoto( foto.id )">
+          <a href="javascript:;" (click)="openFoto( foto.id )">
             <img mat-card-image src="{{foto.url}}" alt="" >
           </a>
         <mat-grid-tile-header>{{foto.id}}</mat-grid-tile-header>

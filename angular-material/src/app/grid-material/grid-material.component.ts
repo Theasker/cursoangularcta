@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { FotosService } from '../fotos.service';
 import { FotoDetailComponent } from '../foto-detail/foto-detail.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-grid-material',
@@ -13,7 +14,11 @@ export class GridMaterialComponent implements OnInit, OnDestroy {
   private _fotos: Array<any>;
   private _subscription: any;
 
+
   constructor(
+
+    private route: ActivatedRoute,
+    private router: Router,
     private _fotosService: FotosService,
     public dialog: MatDialog
   ) {  }
@@ -33,7 +38,7 @@ export class GridMaterialComponent implements OnInit, OnDestroy {
   }
 
   openFoto(id: number): void {
-      const dialogRef = this.dialog.open( FotoDetailComponent, {
+    const dialogRef = this.dialog.open( FotoDetailComponent, {
       width: '450px',
       data: {id: id}
     });

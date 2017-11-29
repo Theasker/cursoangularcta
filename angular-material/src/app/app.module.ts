@@ -11,7 +11,8 @@ import {
   MatMenuModule,
   MatToolbarModule,
   MatIconModule,
-  MatDialogModule
+  MatDialogModule,
+  MatInputModule
 } from '@angular/material';
 import {MatGridListModule} from '@angular/material/grid-list';
 
@@ -20,6 +21,7 @@ import { FotosService } from './fotos.service';
 import { AppComponent } from './app.component';
 import { GridMaterialComponent } from './grid-material/grid-material.component';
 import { FotoDetailComponent } from './foto-detail/foto-detail.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -32,6 +34,8 @@ import { FotoDetailComponent } from './foto-detail/foto-detail.component';
     BrowserModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    ReactiveFormsModule,
+    FormsModule,
     MatButtonModule,
     MatCardModule,
     MatMenuModule,
@@ -39,12 +43,16 @@ import { FotoDetailComponent } from './foto-detail/foto-detail.component';
     MatIconModule,
     MatGridListModule,
     MatDialogModule,
+    MatInputModule,
     RouterModule.forRoot([
       { path: 'list-fotos', component: GridMaterialComponent },
       { path: 'fotos/:id', component: FotoDetailComponent },
       { path: '', redirectTo: 'list-fotos', pathMatch: 'full' },
       { path: '**', redirectTo: 'list-fotos', pathMatch: 'full' }
     ])
+  ],
+  entryComponents: [
+    FotoDetailComponent
   ],
   providers: [FotosService],
   bootstrap: [AppComponent]
