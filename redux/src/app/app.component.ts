@@ -27,6 +27,7 @@ export class AppComponent {
 
   saludarCastellano() {
     // necesito una variable de tipo store
+    // Generamos los eventos
     this.store.dispatch({type: 'SPANISH'});
   }
 

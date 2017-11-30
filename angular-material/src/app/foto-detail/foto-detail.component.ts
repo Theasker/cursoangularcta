@@ -31,6 +31,7 @@ export class FotoDetailComponent implements OnInit {
   ngOnInit() {
     this.photoForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      url: ['', [Validators.required]]
     });
 
     console.log(this.data);

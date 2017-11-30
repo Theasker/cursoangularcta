@@ -44,7 +44,9 @@
         - [Servicios GUARD](#servicios-guard)
         - [Debug](#debug)
         - [Patrón redux / ngrx](#patrón-redux--ngrx)
+            - [Uso básico de Redux](#uso-básico-de-redux)
         - [Testing en Angular](#testing-en-angular)
+            - [Implementación de test unitario](#implementación-de-test-unitario)
         - [Interceptores](#interceptores)
     - [angular-cli](#angular-cli)
         - [Generación](#generación)
@@ -942,13 +944,38 @@ Usando la palabra **`debugger;`** en el sitio donde queramos parar la ejecución
 
 ### Patrón redux / ngrx
 
+**Enlaces**
+* https://carlosazaustre.es/como-funciona-redux-conceptos-basicos/
+
 Arquitectura que viene de **React.js**.
 
 REDUX: Patrón que nos permite poder 'escuchar' cambios en el modelo de datos (**Observables**). Está introducido en Angular por medio de la librería **ngrx**.
 
 Funcionamiento: Desacoplamos la capa de presentación de todos los elementos de la aplicación. Emitimos acciones como pulsar un botón, pasa por una función **Reducer** mira lo que hay que aplicar sobre el modelo y lo modifica, luego lo mueve a un almacén que es escuchado por la interfaz de usuario y hace los cambios que crea necesario.
 
-Sólo hay un **Store** en toda la aplicación y es inmutable, es decir, cada vez que lo cambiamos lo hacemos en una copa de el. Toda la información reside en un único objeto. Esta información está completamente separada de la Interfaz de Usuario. Ese objeto representa el estado de la app. Podemos acceder a cualquier estado que haya tenido el objeto. Este objeto es Inmutable. Cuando hay un cambio en el estado de la aplicación son cosumidos de manera asincrona por medio de observables. Los cambios de estado solo podemos provocarlos por medio de la UI Todaa caccion tiene como minimo una propiedad 'type'. Este **cambio de estado** es gestionado por las funciones '**REDUCER**' que gestionan los types de las acciones.
+Sólo hay un **Store** en toda la aplicación y es inmutable, es decir, cada vez que lo cambiamos lo **hacemos en una copa de el por medio de acciones**. 
+
+Una acción es simplemente un objeto JavaScript que incluye al menos un atributo type que indica el tipo de acción que estamos emitiendo y en caso de que haya datos asociados al cambio o modificación, un atributo payload con esos datos:
+
+````json
+{
+   type: 'LOAD_PRODUCTS',
+   products: products
+}
+````
+
+Estas acciones suelen devolverse a través de un Action Creator que sería de este tipo:
+
+````json
+function loadProducts(products) {
+  return {
+    type: 'LOAD_PRODUCTS',
+    products
+  }
+}
+````
+
+Toda la información reside en un único objeto. Esta información está completamente separada de la Interfaz de Usuario. Ese objeto representa el estado de la app. Podemos acceder a cualquier estado que haya tenido el objeto. Este objeto es Inmutable. Cuando hay un cambio en el estado de la aplicación son cosumidos de manera asincrona por medio de observables. Los cambios de estado solo podemos provocarlos por medio de la UI Todaa caccion tiene como minimo una propiedad 'type'. Este **cambio de estado** es gestionado por las funciones '**REDUCER**' que gestionan los types de las acciones.
 
 Necesitamos un setup, es decir, configuración de redux
 ````bash
@@ -960,10 +987,150 @@ npm install @ngrx/store-devtools --save
 
 **Debug para Redux** con **Redux DevTools** para google Chrome.
 
+#### Uso básico de Redux
+
+Aplicación que cambia de estado una variable `message` con un texto:
+
+`app.module.ts`
+````typescript
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+// Redux
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools'
+
+
+import { AppRoutingModule } from './app-routing.module';
+
+import { AppComponent } from './app.component';
+import { saludoReducer } from './saludo.reducer';
+
+// Número de estados que puede guardar la herramienta de debug
+// StoreDevtoolsModule.instrument({maxAge: 10})
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    StoreModule.forRoot({
+      message: saludoReducer
+    }),
+    StoreDevtoolsModule.instrument({maxAge: 10})
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+````
+
+`app.component.ts`
+````typescript
+import { Component } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
+
+// Interface que representa el estado de la aplicación
+interface AppState {
+  message: string;
+}
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+
+export class AppComponent {
+  message: Observable<string>;
+
+  constructor(
+    // Gestiona el modelo de datos
+    private store: Store<AppState>
+  ) {
+    // Escuchamos el cambio de estado
+    // Select vincula el cambio en el almacén (store) con la variable message
+    this.message = this.store.select('message');
+  }
+
+  saludarCastellano() {
+    // necesito una variable de tipo store
+    // Generamos los eventos
+    this.store.dispatch({type: 'SPANISH'});
+  }
+
+  saludarIngles() {
+    this.store.dispatch({type: 'ENGLISH'});
+  }
+}
+````
+
+`saludo.reducer.ts`
+````typescript
+// Función que recibe acciónes
+import { Action } from '@ngrx/store';
+
+export function saludoReducer(state: string = 'Hola', action: Action) {
+    /*
+     La variable 'message' es nuestro modelo
+     que se modifican con las funciones saludarCastellano() y saludarInges()
+    */
+
+    // Lanzamiento de las acciones que cambian el estado
+    switch (action.type) {
+        case 'SPANISH':
+            return state = 'Hola Redux !!';
+        case 'ENGLISH':
+            return state = 'Hello Redux !!';
+        default:
+            return state;
+    }
+}
+````
+
+`app.component.html`
+````html
+<!-- Gestiona la variable del observable de forma asincrona como trabajan los observables -->
+<h2>{{message | async}}</h2>
+<button (click)="saludarCastellano()">Saludar en castellano</button>
+<button (click)="saludarIngles()">Saludar en inglés</button>
+````
 
 ### Testing en Angular
 
+Cuanto más desacoplada esté la aplicación, más fácil es testearla.
 
+* **Unit testing**: Comprobar cada uno de los elementos que funcionan. 
+  * Isolated: Sólo compruebas implementación (lógica).
+  * Integrated: 
+* **End-to-end testing**: Probar casos de uso. Test funcional.
+
+Herramientas para testing en Angular:
+* **Jasmine**: Para escribir test unitarios.
+* **Karma**: Motor para ejecutar test.
+* **Protractor**: Para test funcionales (End-to-end) en casos de uso.
+
+````bash
+npm install jasmine-core jasmine --save-dev
+npm install karma karma-cli --save-dev
+npm install karma-jasmine karma-chrome-launcher
+````
+
+Pasa una vez todos los test
+````bash
+npm run test: one
+````
+
+Hace un watch y se queda a la escucha de los test
+`````bash
+npm run test
+````
+
+#### Implementación de test unitario
+
+Jasmine nos permite unos métodos. `describe()` agrupa los test unitarios. `describe()` se compone de `it()`. Dentro de `it()`.
 
 ### Interceptores
 

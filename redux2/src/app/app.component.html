@@ -1,0 +1,21 @@
+<!-- Gestiona la variable del observable de forma asincrona como trabajan los observables -->
+<h2>{{message | async}}</h2>
+<button (click)="saludarCastellano()">Saludar en castellano</button>
+<button (click)="saludarIngles()">Saludar en inglés</button>
+
+<!-- Al poner el pipe 'async' convierte el observable 'post' al contenido de ese observable -->
+<div *ngIf="(post | async) as like">
+    <h2>Likes: {{ like.likes }}</h2>
+    <h2>Post: {{ like.text }}</h2>
+</div>
+
+<input type="text" [(ngModel)]="text" />
+
+<p>
+    <button (click)="editText()">Edit Text</button>
+    <button (click)="like()">Like</button>
+    <button (click)="unlike()">Unlike</button>
+    <button (click)="reset()">Reset</button>
+</p>
+
+<router-outlet></router-outlet>

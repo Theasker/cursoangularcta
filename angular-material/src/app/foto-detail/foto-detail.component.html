@@ -8,12 +8,23 @@
     </mat-card-header>
     <img mat-card-image [src]="_foto?.url" [alt]="_foto?.title">
     <mat-card-content>
-      <!-- INPUT TITULO ------------------>
-          <input id="title" 
+      <!-- INPUTs #####################-->
+        <mat-form-field style="width: 100%;">
+            width: 100%;
+          <input matInput
+            id="title" 
             type="text"
             name="title"
-            formControlName="title"/>      
-      <!---------------------------------->
+            formControlName="title"/>
+        </mat-form-field>
+        <mat-form-field style="width: 100%;">
+          <input matInput
+            id="url" 
+            type="text"
+            name="url"
+            formControlName="url"/>
+        </mat-form-field>
+      <!--#############################-->
     </mat-card-content>
     <mat-card-footer>
       <button mat-button><mat-icon>face</mat-icon></button>
