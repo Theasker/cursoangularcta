@@ -44,6 +44,8 @@
         - [Servicios GUARD](#servicios-guard)
         - [Debug](#debug)
         - [Patrón redux / ngrx](#patrón-redux--ngrx)
+        - [Testing en Angular](#testing-en-angular)
+        - [Interceptores](#interceptores)
     - [angular-cli](#angular-cli)
         - [Generación](#generación)
     - [Referencias oficiales y enlaces](#referencias-oficiales-y-enlaces)
@@ -936,11 +938,37 @@ Si no se cumple el criterio se devuelve false y sino true.
 
 ### Debug
 
-Usando la palabra **`debugger;`** en el sitio donde queramos parar la ejecución.
+Usando la palabra **`debugger;`** en el sitio donde queramos parar la ejecución y hacer debug a partir de ese punto.
 
 ### Patrón redux / ngrx
 
+Arquitectura que viene de **React.js**.
 
+REDUX: Patrón que nos permite poder 'escuchar' cambios en el modelo de datos (**Observables**). Está introducido en Angular por medio de la librería **ngrx**.
+
+Funcionamiento: Desacoplamos la capa de presentación de todos los elementos de la aplicación. Emitimos acciones como pulsar un botón, pasa por una función **Reducer** mira lo que hay que aplicar sobre el modelo y lo modifica, luego lo mueve a un almacén que es escuchado por la interfaz de usuario y hace los cambios que crea necesario.
+
+Sólo hay un **Store** en toda la aplicación y es inmutable, es decir, cada vez que lo cambiamos lo hacemos en una copa de el. Toda la información reside en un único objeto. Esta información está completamente separada de la Interfaz de Usuario. Ese objeto representa el estado de la app. Podemos acceder a cualquier estado que haya tenido el objeto. Este objeto es Inmutable. Cuando hay un cambio en el estado de la aplicación son cosumidos de manera asincrona por medio de observables. Los cambios de estado solo podemos provocarlos por medio de la UI Todaa caccion tiene como minimo una propiedad 'type'. Este **cambio de estado** es gestionado por las funciones '**REDUCER**' que gestionan los types de las acciones.
+
+Necesitamos un setup, es decir, configuración de redux
+````bash
+ng new redux --routing
+cd redux
+npm install @ngrx/core @ngrx/store --save
+npm install @ngrx/store-devtools --save
+````
+
+**Debug para Redux** con **Redux DevTools** para google Chrome.
+
+
+### Testing en Angular
+
+
+
+### Interceptores
+
+* https://www.adictosaltrabajo.com/tutoriales/interceptores-en-angular-4-3/
+* Curso de Angular con Redux
 
 
 ## angular-cli
