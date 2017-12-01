@@ -46,8 +46,12 @@
         - [Patrón redux / ngrx](#patrón-redux--ngrx)
             - [Uso básico de Redux](#uso-básico-de-redux)
         - [Testing en Angular](#testing-en-angular)
-            - [Implementación de test unitario](#implementación-de-test-unitario)
+            - [TDD: Test Driven Developer](#tdd-test-driven-developer)
+            - [Implementación de test unitario de un componente](#implementación-de-test-unitario-de-un-componente)
+            - [Implementación de test unitario de un servicio](#implementación-de-test-unitario-de-un-servicio)
         - [Interceptores](#interceptores)
+        - [Despliegue de una aplicación (Deploy)](#despliegue-de-una-aplicación-deploy)
+            - [Lazy loading](#lazy-loading)
     - [angular-cli](#angular-cli)
         - [Generación](#generación)
     - [Referencias oficiales y enlaces](#referencias-oficiales-y-enlaces)
@@ -1124,19 +1128,236 @@ npm run test: one
 ````
 
 Hace un watch y se queda a la escucha de los test
-`````bash
+````bash
 npm run test
 ````
 
-#### Implementación de test unitario
+Para probar la parte lógica de una aplicación:
+
+`app.component.spec.ts`
+````bash
+import { AppComponent } from './app.component';
+
+describe('AppComponent test', () => {
+  let component: AppComponent;
+
+  beforeEach( () => {
+    component = new AppComponent();
+  });
+
+  it('name esta ninicializado con el valor Angular', () => {
+    // Espero que la variable name del componente sea igual a
+    expect(component.name).toBe('Angular');
+  });
+
+  it('name el valor Angular X', () => {
+    // Si cambiamos el valor de una variable name concuerda con lo que hemos cambiado
+    component.name = 'Angular X';
+    expect(component.name).toBe('Angular X');
+  })
+
+});
+````
+
+#### TDD: Test Driven Developer
+
+Se hacen los test y luego se va haciendo la programación para ir "arreglando" los test que fallan.
+
+
+#### Implementación de test unitario de un componente
 
 Jasmine nos permite unos métodos. `describe()` agrupa los test unitarios. `describe()` se compone de `it()`. Dentro de `it()`.
+
+Los test unitarios no tienen que depender de ningún servicio ni de nada. Tienen que ser **Isolated**, es decir, no deben ir a buscar ningún deato de los servicios, por lo que hay que hacer un **mock** de los datos.
+
+`book-list.component.ts`
+````typescript
+...
+export class BooksListComponent implements OnInit {
+  booksList: Book[] = [];
+
+  constructor(private storeService: BookStoreService) {
+  }
+
+  ngOnInit() {
+    this.getBooksList();
+  }
+
+  getBooksList() {
+    this.storeService.getBooks()
+      .subscribe(books => this.booksList = books);
+  }
+}
+````
+
+Y ahora hacemos el test del componente
+
+`books-list.component.spec.ts`
+````typescript
+import { BooksListComponent } from 'app/books/books-list/books-list.component';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
+
+describe('Lógica del BookListComponent', () => {
+    // Declaración del componente
+    let bookListComponent: BooksListComponent;
+    let mockBookStoreService;
+
+    beforeEach( () => {
+        // Creo el mock para poder probar que funciona todo sin usar el servicio
+        mockBookStoreService = jasmine.createSpyObj('mockBookStoreService', ['getBooks']);
+        // Inyectamos el mock en el constructor del comonente 
+        // que sustituye al servicio que tiene en realidad inyectado
+        bookListComponent = new BooksListComponent(mockBookStoreService);
+    })
+
+    it('Lista de libros inicialmente vacía', () => {
+        const numBooks = bookListComponent.booksList.length;
+        expect(numBooks).toBe(0);
+        // Que no sea 0
+        // expect(numBooks).not.toBe(0);
+    });
+
+    describe('ngOnInit', () => {
+        it('Acceso a booklist', () => {
+            const books = [{}, {}]; // Le decimos que haya 2 elementos para el mock
+            // Cuando alguien invoque al mockBookStoreService devolverá un Observable de books
+            mockBookStoreService.getBooks.and.returnValue(Observable.of(books));
+            // Forzamos la ejecución del ngOnInit() para que cargue los 2 elementos que recupera del mock
+            bookListComponent.ngOnInit();
+            // Comprobamos si la longitud del array es de 2 elementos
+            expect(bookListComponent.booksList.length).toBe(2);
+        });
+    });
+
+})
+````
+
+#### Implementación de test unitario de un servicio
+`book-store.service.ts`
+````typescript
+import { Injectable } from '@angular/core';
+import { Http, Headers } from '@angular/http';
+
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+
+import { Book } from './book';
+
+@Injectable()
+export class BookStoreService {
+
+  baseUrl = 'http://58e15045f7d7f41200261f77.mockapi.io/api/v1/books/';
+  headers = new Headers({'Content-Type': 'application/json'});
+
+  constructor(private http: Http) {
+  }
+
+  getBook(id: number): Observable<Book> {
+    const url = `${this.baseUrl}${id}`;
+    return this.http.get(url)
+      .map(response => response.json() as Book);
+  }
+
+  getBooks(): Observable<Book[]> {
+    const url = `${this.baseUrl}`;
+    return this.http.get(url)
+      .map(response => response.json() as Book[]);
+  }
+
+  addBook(book: Book) {
+    const url = `${this.baseUrl}`;
+    const body = JSON.stringify(book);
+    return this.http.post(url, body, {headers: this.headers})
+      .map(response => response.json());
+  }
+
+  deleteBook(id: number) {
+    const url = `${this.baseUrl}${id}`;
+    return this.http.delete(url, {headers: this.headers});
+  }
+}
+````
+
+`book-store-service.spec.ts`
+````typescript
+import { BookStoreService } from './book-store.service';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/observable/of';
+import { Book } from './book';
+
+describe('BookStoreService', () => {
+    let bookStoreService: BookStoreService;
+    let mockHttp;
+
+    // Se ejecuta antes de cada uno de los it()
+    // Le inyectamos el mock para que lo use en vez del http client
+    beforeEach( () => {
+        mockHttp = jasmine.createSpyObj('mockHttp', ['get', 'post', 'delete']);
+        bookStoreService = new BookStoreService(mockHttp);
+    });
+
+    describe('deleteBook', () => {
+
+      // Comprobaremos que el método delete() devuelve un observable del libro borrado
+      it('se debería borrar un libro', () => {
+        const book: Book = {
+          id: 12,
+          isbn: 895565,
+          title: 'libro 1',
+          authors: 'xxxx',
+          published: 'fecha',
+          description: 'libro 1 desc',
+          coverImage: 'imagen portada'
+        }
+        const id = 12;
+        mockHttp.delete.and.returnValue(Observable.of(book));
+        const response = bookStoreService.deleteBook(12);
+        response.subscribe( value => {
+          expect(value).toBe(book);
+        });
+      })
+
+      // Comprobación de la llegada de un párametro en un método
+      it('Invocación del http es correcta y además el parámetro url tiene el valor correcto', () => {
+        const id = 12;
+        const url = `http://58e15045f7d7f41200261f77.mockapi.io/api/v1/books/${id}`;
+        // Comprobamos a true xq no nos interesa la devolución de la función
+        mockHttp.delete.and.returnValue(Observable.of(true));
+        const response = bookStoreService.deleteBook(id);
+        // jasmine.any(Object) es un objeto cualquiera
+        expect(mockHttp.delete).toHaveBeenCalledWith(url, jasmine.any(Object));
+      })
+    })
+});
+````
 
 ### Interceptores
 
 * https://www.adictosaltrabajo.com/tutoriales/interceptores-en-angular-4-3/
 * Curso de Angular con Redux
 
+### Despliegue de una aplicación (Deploy)
+
+* https://angular.io/guide/deployment
+
+Compilación en un entorno de desarrollo. En el mete los ficheros .map para el mapeo con los ficheros ts.
+````bash
+ng build
+````
+
+Versión de producción
+````bash
+ng build --prod
+````
+
+#### Lazy loading
+
+Hasta que no se use una funcionalidad, no se cargará el módulo que se vaya a usar. Se usa en el sistema de enrutado.
+
+````typescript
+{ path: 'lazy', loadChildren: 'lazy/lazy.module#LazyModule' }
+````
 
 ## angular-cli
 
@@ -1146,7 +1367,6 @@ Jasmine nos permite unos métodos. `describe()` agrupa los test unitarios. `desc
 * Generación de un componente en una carpeta: `ng generate component components/second-component`
 * Generación de un componente sin carpeta y diciendole donde: `ng generate component components/second-component --flat --spec false` (no creamos el fichero de testing *.spec.ts).
 * Crear un Custom Pipe: `ng generate pipe shared/convert-to-spaces`
-
 
 
 ## Referencias oficiales y enlaces
@@ -1171,3 +1391,5 @@ http://idea.iteblog.com/key.php
 Nuestro amigo el chino: http://blog.lanyus.com/
 
 * Angular 4: Pedro J. Jiménez Castellar
+
+* Gogs: Servidor Git
